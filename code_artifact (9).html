@@ -1,0 +1,2360 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار تحديد المستوى التفاعلي الشامل - الأستاذ ماجد السويهري</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at top left, #fef3c7 0%, #ecfdf5 45%, #f0fdf4 100%);
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            user-select: none;
+        }
+        .en-font {
+            font-family: 'Nunito', sans-serif;
+        }
+        .en-title {
+            font-family: 'Fredoka', sans-serif;
+        }
+        .magic-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* تنسيق التوصيل بالسهم (السؤال 1) */
+        .match-item-left, .match-item-right {
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+        .match-item-left:hover, .match-item-right:hover {
+            background-color: #fef3c7;
+        }
+        .match-item-left.active-source {
+            background-color: #fde68a !important;
+            box-shadow: inset 0 0 0 3px #d97706;
+        }
+
+        /* تنسيق الكلمات المسحوبة وخطوط الكتابة تحت الصور (السؤال 2) */
+        .word-chip {
+            cursor: grab;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .word-chip:hover {
+            transform: translateY(-3px) scale(1.04);
+        }
+        .word-chip.selected-chip {
+            background: linear-gradient(135deg, #d97706, #ea580c) !important;
+            color: #ffffff !important;
+            border-color: #b45309 !important;
+            transform: scale(1.08);
+            box-shadow: 0 8px 18px rgba(234, 88, 12, 0.35);
+        }
+        .lined-slot {
+            background-image: linear-gradient(to bottom, transparent 30%, #94a3b8 30%, #94a3b8 33%, transparent 33%, transparent 63%, #cbd5e1 63%, #cbd5e1 66%, transparent 66%, transparent 94%, #94a3b8 94%, #94a3b8 97%, transparent 97%);
+            min-height: 48px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lined-slot:hover {
+            background-color: #fef3c7;
+        }
+
+        /* تنسيق أزرار صح وخطأ (السؤال 3) */
+        .tf-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 1.15rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+        }
+        .tf-btn:hover {
+            transform: scale(1.1);
+        }
+        .tf-btn.active-true {
+            background: #16a34a;
+            color: #ffffff;
+            border-color: #15803d;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+        }
+        .tf-btn.active-false {
+            background: #dc2626;
+            color: #ffffff;
+            border-color: #b91c1c;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        /* تنسيق وضع دائرة حول الإجابة الصحيحة (السؤال 4) */
+        .circle-choice {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2.5px solid transparent;
+        }
+        .circle-choice:hover {
+            background-color: #f3e8ff;
+        }
+        .circle-choice.circled {
+            border-color: #7e22ce;
+            background-color: #faf5ff;
+            color: #6b21a8;
+            font-weight: 900;
+            box-shadow: 0 0 0 3px rgba(126, 34, 206, 0.15);
+            transform: scale(1.02);
+        }
+        .circle-choice.correct-circle {
+            border-color: #16a34a !important;
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2) !important;
+        }
+        .circle-choice.wrong-circle {
+            border-color: #dc2626 !important;
+            background-color: #ffe4e6 !important;
+            color: #b91c1c !important;
+        }
+
+        /* تنسيق التزامن الصوتي للكلمات والجمل في قطعة الفهم القرائي */
+        .story-sentence {
+            border-radius: 8px;
+            padding: 2px 4px;
+            transition: background-color 0.25s ease, box-shadow 0.25s ease;
+            display: inline;
+        }
+        .story-sentence.active-sentence {
+            background-color: rgba(243, 232, 255, 0.9);
+            box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.2);
+        }
+        .story-word {
+            display: inline-block;
+            padding: 0 3px;
+            margin: 0 0.5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.14s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .story-word:hover {
+            background-color: #fef3c7;
+            color: #9333ea;
+            transform: translateY(-1px);
+        }
+        .story-word.active-word {
+            background: linear-gradient(135deg, #facc15, #f59e0b) !important;
+            color: #0f172a !important;
+            font-weight: 900 !important;
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
+            z-index: 10;
+        }
+        .story-word.spoken-word {
+            color: #6b21a8;
+        }
+
+        /* إبراز عناصر الرسم التوضيحي بالتزامن مع القصة */
+        .svg-story-item {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+        .svg-story-item.highlight-animal {
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.95));
+            transform: scale(1.12);
+        }
+
+        /* موجات الصوت المتحركة */
+        @keyframes soundWave {
+            0%, 100% { height: 5px; }
+            50% { height: 16px; }
+        }
+        .wave-bar {
+            width: 3px;
+            background-color: #ffffff;
+            border-radius: 9999px;
+            display: inline-block;
+            animation: soundWave 0.7s infinite ease-in-out;
+        }
+        .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin-bottom: 12px !important;
+            }
+            .lesson-section {
+                display: block !important;
+            }
+            .page-break-avoid {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-5 px-3 sm:px-6 text-slate-800">
+
+    <div class="max-w-7xl mx-auto">
+
+        <!-- الترويسة الخيالية الجذابة مع شعار Langua Learn واسم الأستاذ ماجد السويهري -->
+        <header class="bg-gradient-to-r from-[#14532d] via-[#15803d] to-[#d97706] text-white rounded-3xl shadow-2xl overflow-hidden border-4 border-amber-200 mb-6 print-container page-break-avoid relative">
+            <div class="absolute -top-12 -left-12 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -right-12 w-56 h-56 bg-amber-300/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- الشريط العلوي: اسم الطالب، عنوان الاختبار، الدرجة من 19 -->
+            <div class="px-5 pt-4 pb-2.5 flex flex-wrap items-center justify-between gap-3 bg-black/20 border-b border-white/15">
+                <div class="bg-white text-slate-800 px-4 py-1.5 rounded-2xl flex items-center gap-2 shadow-md min-w-[240px] sm:min-w-[300px]" dir="ltr">
+                    <label for="studentName" class="en-font font-extrabold text-emerald-800 text-xs sm:text-sm whitespace-nowrap">Name:</label>
+                    <input type="text" id="studentName" dir="rtl" placeholder="اكتب اسم الطالب هنا..." 
+                        class="w-full bg-transparent border-b-2 border-emerald-300 focus:border-amber-600 focus:outline-none font-bold text-slate-900 px-1 text-sm">
+                </div>
+
+                <div class="text-center mx-auto">
+                    <span class="en-title tracking-wider text-amber-200 font-extrabold text-sm sm:text-lg drop-shadow">
+                        🌿 NATURE & CREATURES INTERACTIVE PLACEMENT TEST (19 QUESTIONS) 🦋
+                    </span>
+                </div>
+
+                <div class="bg-white text-slate-800 px-5 py-1.5 rounded-2xl font-extrabold flex items-center gap-2 shadow-md" dir="ltr">
+                    <span class="en-font text-slate-700">Score:</span>
+                    <span id="headerScore" class="text-xl text-emerald-700 en-font underline decoration-2">--</span>
+                    <span class="en-font text-slate-700">/ 19</span>
+                </div>
+            </div>
+
+            <!-- الشعار، العنوان الرئيسي، واسم الأستاذ ماجد السويهري -->
+            <div class="px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+                <!-- شعار Langua Learn المعتمد -->
+                <div class="flex items-center gap-3" dir="ltr">
+                    <div class="bg-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2.5 border-2 border-amber-100">
+                        <svg class="w-11 h-11 flex-shrink-0" viewBox="0 0 100 100" fill="none">
+                            <path d="M12 10 H76 V34 H61 V24 H26 V76 H56 V90 H12 Z" fill="#EB8258"/>
+                            <polygon points="50,35 14,50 50,65 86,50" fill="#3B096C"/>
+                            <path d="M32 58 V74 C32 81 68 81 68 74 V58 L50 67 Z" fill="#4A148C"/>
+                            <circle cx="74" cy="64" r="4" fill="#3B096C"/>
+                        </svg>
+                        <div class="leading-none text-left en-title">
+                            <div class="text-[#EB8258] font-extrabold text-base tracking-wider">LANGUA</div>
+                            <div class="text-[#4A148C] font-extrabold text-base tracking-wider">LEARN</div>
+                            <div class="text-[9px] text-[#EB8258] font-bold tracking-tight mt-0.5">Learn, Grow, Succeed</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- عنوان الاختبار التفاعلي -->
+                <div class="text-center">
+                    <h1 class="en-title text-2xl sm:text-4xl font-extrabold tracking-wide text-white drop-shadow-md" dir="ltr">
+                        Zoologist & Nature Adventure
+                    </h1>
+                    <div class="mt-2 inline-flex flex-wrap items-center justify-center gap-2 bg-amber-100 text-amber-950 px-5 py-1 rounded-full text-xs sm:text-sm font-black shadow-md border-2 border-white">
+                        <span>🎯 اختبار تحديد المستوى التفاعلي (19 سؤالاً) — التوصيل بالسهم • الصور • صح وخطأ • الفهم القرائي</span>
+                    </div>
+                </div>
+
+                <!-- اسم الأستاذ ماجد السويهري -->
+                <div class="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-4 py-2.5 rounded-2xl border border-white/25 shadow-inner">
+                    <div class="text-right">
+                        <div class="text-white text-sm sm:text-lg font-black drop-shadow">إعداد الأستاذ: ماجد السويهري</div>
+                        <div class="text-amber-200 text-xs font-extrabold mt-0.5">معلم اللغة الإنجليزية</div>
+                    </div>
+                    <div class="w-11 h-11 rounded-xl bg-amber-400/25 border border-amber-200/40 flex items-center justify-center text-2xl shadow-sm">
+                        🦁
+                    </div>
+                </div>
+            </div>
+
+            <!-- شريط التنقل السريع بين أقسام الاختبار الأربعة -->
+            <div class="bg-black/25 px-4 py-2.5 flex flex-wrap items-center justify-center gap-2 no-print border-t border-white/15">
+                <button onclick="filterSection('all')" id="tab-all" class="px-4 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-amber-400 text-slate-900 shadow transition">
+                    📋 عرض جميع الأقسام (19 سؤالاً)
+                </button>
+                <button onclick="filterSection(1)" id="tab-1" class="px-3.5 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white transition">
+                    1️⃣ السؤال 1: وصّل بالسهم (1–3)
+                </button>
+                <button onclick="filterSection(2)" id="tab-2" class="px-3.5 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white transition">
+                    2️⃣ السؤال 2: الكلمة تحت الصورة (4–7)
+                </button>
+                <button onclick="filterSection(3)" id="tab-3" class="px-3.5 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white transition">
+                    3️⃣ السؤال 3: صح أم خطأ (8–11)
+                </button>
+                <button onclick="filterSection(4)" id="tab-4" class="px-3.5 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white transition">
+                    4️⃣ السؤال 4: اقرأ وضع دائرة (12–19)
+                </button>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+            <!-- لوحة الأسئلة (19 سؤالاً) وتحديد المستوى (على اليمين) -->
+            <aside class="lg:col-span-4 magic-card rounded-3xl shadow-xl border-2 border-emerald-200 p-4 sm:p-5 lg:sticky lg:top-4 print-container page-break-avoid">
+                <div class="flex items-center justify-between border-b border-emerald-100 pb-3 mb-3">
+                    <h2 class="font-extrabold text-base sm:text-lg text-emerald-950 flex items-center gap-2">
+                        <span class="bg-emerald-100 text-emerald-700 p-1.5 rounded-xl">🧭</span>
+                        لوحة الأسئلة (19 سؤالاً)
+                    </h2>
+                    <span id="progressBadge" class="text-xs font-extrabold bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full border border-emerald-200">
+                        0 / 19 مجاب
+                    </span>
+                </div>
+
+                <!-- شريط التقدم المئوي -->
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-4 p-0.5 border border-slate-200">
+                    <div id="progressBar" class="bg-gradient-to-r from-emerald-500 via-teal-500 to-amber-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+
+                <!-- شبكة أرقام الأسئلة الـ 19 مقسمة حسب الأقسام الأربعة -->
+                <div class="space-y-2.5 mb-4">
+                    <!-- القسم 1: 1 إلى 3 -->
+                    <div class="bg-amber-50/80 border border-amber-200 rounded-2xl p-2.5">
+                        <div class="flex items-center justify-between text-[11px] font-extrabold text-amber-950 mb-1.5">
+                            <span>1) Match (وصّل بالسهم 🏹)</span>
+                            <span>(1 – 3)</span>
+                        </div>
+                        <div id="navGridSec1" class="grid grid-cols-3 gap-1.5"></div>
+                    </div>
+
+                    <!-- القسم 2: 4 إلى 7 -->
+                    <div class="bg-emerald-50/80 border border-emerald-200 rounded-2xl p-2.5">
+                        <div class="flex items-center justify-between text-[11px] font-extrabold text-emerald-950 mb-1.5">
+                            <span>2) Choose word (الكلمة تحت الصورة 🖼️)</span>
+                            <span>(4 – 7)</span>
+                        </div>
+                        <div id="navGridSec2" class="grid grid-cols-4 gap-1.5"></div>
+                    </div>
+
+                    <!-- القسم 3: 8 إلى 11 -->
+                    <div class="bg-teal-50/80 border border-teal-200 rounded-2xl p-2.5">
+                        <div class="flex items-center justify-between text-[11px] font-extrabold text-teal-950 mb-1.5">
+                            <span>3) True or False (صح ✓ أم خطأ ✗)</span>
+                            <span>(8 – 11)</span>
+                        </div>
+                        <div id="navGridSec3" class="grid grid-cols-4 gap-1.5"></div>
+                    </div>
+
+                    <!-- القسم 4: 12 إلى 19 -->
+                    <div class="bg-purple-50/80 border border-purple-200 rounded-2xl p-2.5">
+                        <div class="flex items-center justify-between text-[11px] font-extrabold text-purple-950 mb-1.5">
+                            <span>4) Read & Choose (ضع دائرة ⭕)</span>
+                            <span>(12 – 19)</span>
+                        </div>
+                        <div id="navGridSec4" class="grid grid-cols-4 gap-1.5"></div>
+                    </div>
+                </div>
+
+                <!-- دليل ألوان اللوحة -->
+                <div class="bg-slate-50 rounded-2xl p-2.5 text-[11px] border border-slate-100 mb-3">
+                    <div class="grid grid-cols-2 gap-1.5 font-bold text-slate-600">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-200 inline-block"></span>
+                            <span>غير مجاب</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                            <span>تمت الإجابة</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
+                            <span>إجابة صحيحة ✓</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
+                            <span>إجابة خاطئة ✗</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مؤشر مستوى الطالب التفاعلي -->
+                <div class="border-t border-slate-100 pt-3">
+                    <div class="text-xs font-extrabold text-slate-500 mb-1.5">مؤشر مستوى الطالب:</div>
+                    <div id="liveLevelBox" class="bg-gradient-to-br from-emerald-50 to-amber-50 rounded-2xl p-3.5 text-center border border-emerald-200">
+                        <div class="text-2xl mb-0.5" id="levelEmoji">📊</div>
+                        <div class="font-extrabold text-emerald-950 text-sm" id="levelTitle">بانتظار إكمال الاختبار (19 سؤالاً)</div>
+                        <p class="text-[11px] text-slate-600 mt-1" id="levelDesc">أجب عن الأسئلة الأربعة ثم اضغط على اعتماد النتيجة لتحديد المستوى بدقة.</p>
+                    </div>
+                </div>
+
+                <!-- أزرار الاعتماد والطباعة والإعادة -->
+                <div class="mt-3.5 space-y-2 no-print">
+                    <button onclick="evaluateQuiz()" class="w-full bg-gradient-to-r from-emerald-700 to-amber-600 hover:from-emerald-800 hover:to-amber-700 active:scale-[0.99] text-white font-extrabold py-2.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                        <span>✅</span>
+                        <span>اعتماد الإجابات وتحديد المستوى</span>
+                    </button>
+
+                    <button onclick="printStudentResult()" class="w-full bg-purple-700 hover:bg-purple-800 active:scale-[0.99] text-white font-extrabold py-2.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                        <span>🖨️</span>
+                        <span>طباعة نتيجة الطالب</span>
+                    </button>
+
+                    <button onclick="resetQuiz()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-2xl transition flex items-center justify-center gap-2 text-xs">
+                        <span>🔄</span>
+                        <span>إعادة الاختبار من جديد</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- القسم الأيسر: أوراق العمل التفاعلية الأربعة (19 سؤالاً) -->
+            <main class="lg:col-span-8 space-y-8">
+
+                <!-- ========================================================================= -->
+                <!-- 1️⃣ SECTION 1: 1) Match (وصل الكلمة بالسهم - 3 أسئلة: 1 إلى 3)              -->
+                <!-- ========================================================================= -->
+                <div id="section-block-1" class="lesson-section space-y-6">
+                    <section class="magic-card rounded-3xl shadow-lg border-[3px] border-amber-400 p-5 sm:p-6 print-container page-break-avoid">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 border-b-2 border-amber-100 pb-3">
+                            <div class="flex items-center gap-2.5" dir="ltr">
+                                <span class="w-9 h-9 rounded-xl bg-amber-600 text-white font-black flex items-center justify-center en-title text-lg shadow">1</span>
+                                <h2 class="en-title font-extrabold text-xl sm:text-2xl text-[#6d4c41] underline decoration-2">
+                                    1) Match
+                                </h2>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-extrabold text-amber-950 bg-amber-100 px-3.5 py-1 rounded-xl border border-amber-300">
+                                    🏹 اضغط على السؤال من اليسار ثم الإجابة من اليمين لرسم سهم التوصيل (3 أسئلة)
+                                </span>
+                                <button onclick="clearMatches()" class="text-xs bg-slate-100 hover:bg-rose-100 text-slate-600 hover:text-rose-700 font-bold px-2.5 py-1 rounded-lg border border-slate-200 transition no-print">
+                                    مسح الأسهم
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- جدول التوصيل التفاعلي مع طبقة رسم الأسهم SVG -->
+                        <div id="matchContainer" class="relative en-font select-none" dir="ltr">
+                            <!-- طبقة الأسهم SVG -->
+                            <svg id="matchSvgOverlay" class="absolute inset-0 w-full h-full pointer-events-none z-20">
+                                <defs>
+                                    <marker id="arrow-amber" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#d97706" />
+                                    </marker>
+                                    <marker id="arrow-correct" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a" />
+                                    </marker>
+                                    <marker id="arrow-wrong" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626" />
+                                    </marker>
+                                </defs>
+                            </svg>
+
+                            <div class="border-2 border-slate-800 rounded-xl overflow-hidden bg-white shadow-sm">
+                                <!-- الصف الأول -->
+                                <div id="qRow-1" class="grid grid-cols-12 border-b-2 border-slate-800 items-stretch">
+                                    <div id="matchLeft-1" onclick="handleMatchLeftClick(1)" class="col-span-5 match-item-left p-3.5 sm:p-4 flex items-center justify-between border-r-2 border-slate-800">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[11px] font-black bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">#1</span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">1. What do you do?</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <button type="button" onclick="event.stopPropagation(); speakText('What do you do?')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                            <span id="leftAnchor-1" class="w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow inline-block"></span>
+                                        </div>
+                                    </div>
+                                    <!-- عمود الحرف الأوسط + مسار السهم -->
+                                    <div class="col-span-2 border-r-2 border-slate-800 flex flex-col items-center justify-center bg-slate-50/60 p-1 relative">
+                                        <span id="matchLetterBox-1" class="font-black text-base sm:text-lg text-amber-800">--</span>
+                                        <span id="badge-1" class="hidden text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-white" dir="rtl"></span>
+                                    </div>
+                                    <div id="matchRight-a" onclick="handleMatchRightClick('a')" class="col-span-5 match-item-right p-3.5 sm:p-4 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span id="rightAnchor-a" class="w-4 h-4 rounded-full bg-slate-300 border-2 border-white shadow inline-block"></span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">a. I work in a zoo.</span>
+                                        </div>
+                                        <button type="button" onclick="event.stopPropagation(); speakText('I work in a zoo.')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                    </div>
+                                </div>
+
+                                <!-- الصف الثاني -->
+                                <div id="qRow-2" class="grid grid-cols-12 border-b-2 border-slate-800 items-stretch">
+                                    <div id="matchLeft-2" onclick="handleMatchLeftClick(2)" class="col-span-5 match-item-left p-3.5 sm:p-4 flex items-center justify-between border-r-2 border-slate-800">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[11px] font-black bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">#2</span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">2. Where do you work?</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <button type="button" onclick="event.stopPropagation(); speakText('Where do you work?')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                            <span id="leftAnchor-2" class="w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow inline-block"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 border-r-2 border-slate-800 flex flex-col items-center justify-center bg-slate-50/60 p-1 relative">
+                                        <span id="matchLetterBox-2" class="font-black text-base sm:text-lg text-amber-800">--</span>
+                                        <span id="badge-2" class="hidden text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-white" dir="rtl"></span>
+                                    </div>
+                                    <div id="matchRight-b" onclick="handleMatchRightClick('b')" class="col-span-5 match-item-right p-3.5 sm:p-4 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span id="rightAnchor-b" class="w-4 h-4 rounded-full bg-slate-300 border-2 border-white shadow inline-block"></span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">b. Because they're so much fun to talk to.</span>
+                                        </div>
+                                        <button type="button" onclick="event.stopPropagation(); speakText('Because they are so much fun to talk to.')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                    </div>
+                                </div>
+
+                                <!-- الصف الثالث -->
+                                <div id="qRow-3" class="grid grid-cols-12 items-stretch">
+                                    <div id="matchLeft-3" onclick="handleMatchLeftClick(3)" class="col-span-5 match-item-left p-3.5 sm:p-4 flex items-center justify-between border-r-2 border-slate-800">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[11px] font-black bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded">#3</span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">3. Why do you like monkeys?</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <button type="button" onclick="event.stopPropagation(); speakText('Why do you like monkeys?')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                            <span id="leftAnchor-3" class="w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow inline-block"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 border-r-2 border-slate-800 flex flex-col items-center justify-center bg-slate-50/60 p-1 relative">
+                                        <span id="matchLetterBox-3" class="font-black text-base sm:text-lg text-amber-800">--</span>
+                                        <span id="badge-3" class="hidden text-[10px] font-extrabold px-1.5 py-0.2 rounded bg-white" dir="rtl"></span>
+                                    </div>
+                                    <div id="matchRight-c" onclick="handleMatchRightClick('c')" class="col-span-5 match-item-right p-3.5 sm:p-4 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span id="rightAnchor-c" class="w-4 h-4 rounded-full bg-slate-300 border-2 border-white shadow inline-block"></span>
+                                            <span class="font-extrabold text-sm sm:text-base text-slate-900">c. I am a zoologist.</span>
+                                        </div>
+                                        <button type="button" onclick="event.stopPropagation(); speakText('I am a zoologist.')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 2️⃣ SECTION 2: 2) Look at the picture and choose the correct answer (4–7)   -->
+                <!-- ========================================================================= -->
+                <div id="section-block-2" class="lesson-section space-y-6">
+                    <section class="magic-card rounded-3xl shadow-lg border-[3px] border-emerald-400 p-5 sm:p-6 print-container page-break-avoid">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-4 border-b-2 border-emerald-100 pb-3">
+                            <div class="flex items-center gap-2.5" dir="ltr">
+                                <span class="w-9 h-9 rounded-xl bg-emerald-600 text-white font-black flex items-center justify-center en-title text-lg shadow">2</span>
+                                <h2 class="en-title font-extrabold text-lg sm:text-xl text-[#6d4c41] underline decoration-2">
+                                    2) Look at the picture and choose the correct answer.
+                                </h2>
+                            </div>
+                            <span class="text-xs font-extrabold text-emerald-950 bg-emerald-100 px-3.5 py-1 rounded-xl border border-emerald-300">
+                                🖐️ اسحب الكلمة أو اضغط عليها ثم اضغط تحت الصورة المناسبة (4 أسئلة: 4 – 7)
+                            </span>
+                        </div>
+
+                        <!-- بنك الكلمات التفاعلي (wink - zoologist - zoo - look after) -->
+                        <div class="bg-amber-50/90 border-2 border-amber-300 rounded-2xl p-3.5 mb-6 text-center en-font" dir="ltr">
+                            <div class="text-xs font-bold text-amber-900 mb-2 no-print" dir="rtl">
+                                💡 اضغط على الكلمة لاختيارها أو اسحبها مباشرة إلى السطور تحت الصورة:
+                            </div>
+                            <div class="flex flex-wrap items-center justify-center gap-3">
+                                <span class="font-black text-xl text-slate-700">(</span>
+                                <div draggable="true" ondragstart="onChipDragStart(event, 'wink')" onclick="selectWordChip('wink')" id="chip-wink"
+                                    class="word-chip bg-white border-2 border-amber-400 text-slate-900 font-black px-4 py-1.5 rounded-xl text-base sm:text-lg shadow-sm flex items-center gap-1.5">
+                                    <span>wink</span>
+                                    <button type="button" onclick="event.stopPropagation(); speakText('wink')" class="text-xs opacity-60 hover:opacity-100 no-print">🔊</button>
+                                </div>
+                                <span class="font-black text-slate-400">-</span>
+                                <div draggable="true" ondragstart="onChipDragStart(event, 'zoologist')" onclick="selectWordChip('zoologist')" id="chip-zoologist"
+                                    class="word-chip bg-white border-2 border-amber-400 text-slate-900 font-black px-4 py-1.5 rounded-xl text-base sm:text-lg shadow-sm flex items-center gap-1.5">
+                                    <span>zoologist</span>
+                                    <button type="button" onclick="event.stopPropagation(); speakText('zoologist')" class="text-xs opacity-60 hover:opacity-100 no-print">🔊</button>
+                                </div>
+                                <span class="font-black text-slate-400">-</span>
+                                <div draggable="true" ondragstart="onChipDragStart(event, 'zoo')" onclick="selectWordChip('zoo')" id="chip-zoo"
+                                    class="word-chip bg-white border-2 border-amber-400 text-slate-900 font-black px-4 py-1.5 rounded-xl text-base sm:text-lg shadow-sm flex items-center gap-1.5">
+                                    <span>zoo</span>
+                                    <button type="button" onclick="event.stopPropagation(); speakText('zoo')" class="text-xs opacity-60 hover:opacity-100 no-print">🔊</button>
+                                </div>
+                                <span class="font-black text-slate-400">-</span>
+                                <div draggable="true" ondragstart="onChipDragStart(event, 'look after')" onclick="selectWordChip('look after')" id="chip-lookafter"
+                                    class="word-chip bg-white border-2 border-amber-400 text-slate-900 font-black px-4 py-1.5 rounded-xl text-base sm:text-lg shadow-sm flex items-center gap-1.5">
+                                    <span>look after</span>
+                                    <button type="button" onclick="event.stopPropagation(); speakText('look after')" class="text-xs opacity-60 hover:opacity-100 no-print">🔊</button>
+                                </div>
+                                <span class="font-black text-xl text-slate-700">)</span>
+                            </div>
+                        </div>
+
+                        <!-- شبكة الصور الأربع مع السطور المسطرة تحت كل صورة -->
+                        <div id="sec2Grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 en-font" dir="ltr"></div>
+                    </section>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 3️⃣ SECTION 3: 3) Put (✓) for True and (✗) for False (8–11)                 -->
+                <!-- ========================================================================= -->
+                <div id="section-block-3" class="lesson-section space-y-6">
+                    <section class="magic-card rounded-3xl shadow-lg border-[3px] border-teal-400 p-5 sm:p-6 print-container page-break-avoid">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-5 border-b-2 border-teal-100 pb-3">
+                            <div class="flex items-center gap-2.5" dir="ltr">
+                                <span class="w-9 h-9 rounded-xl bg-teal-600 text-white font-black flex items-center justify-center en-title text-lg shadow">3</span>
+                                <h2 class="en-title font-extrabold text-lg sm:text-xl text-[#6d4c41] underline decoration-2">
+                                    3) Put (<span class="text-emerald-600">✓</span>) for True and (<span class="text-rose-600">✗</span>) for False.
+                                </h2>
+                            </div>
+                            <span class="text-xs font-extrabold text-teal-950 bg-teal-100 px-3.5 py-1 rounded-xl border border-teal-300">
+                                ✔️ ضع علامة (✓) للعبارة الصحيحة وعلامة (✗) للعبارة الخاطئة (4 أسئلة: 8 – 11)
+                            </span>
+                        </div>
+
+                        <div id="sec3Grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 en-font" dir="ltr"></div>
+                    </section>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- 4️⃣ SECTION 4: 4) Read and Choose (قطعة الفهم القرائي + 8 أسئلة: 12–19)     -->
+                <!-- ========================================================================= -->
+                <div id="section-block-4" class="lesson-section space-y-6">
+                    <section class="magic-card rounded-3xl shadow-lg border-[3px] border-purple-400 p-5 sm:p-6 print-container page-break-avoid">
+                        <!-- عنوان القسم مع العدسة المكبرة وشريط التحكم الصوتي الذكي -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b-2 border-purple-100 pb-3">
+                            <div class="flex items-center gap-2" dir="ltr">
+                                <div class="w-12 h-12 rounded-full border-4 border-purple-700 bg-white flex items-center justify-center shadow-md text-2xl">
+                                    🔍
+                                </div>
+                                <div class="border-2 border-purple-600 rounded-full px-6 py-1.5 bg-purple-50/70 font-black text-slate-900 en-title text-lg sm:text-xl shadow-sm">
+                                    Read and Choose
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-xs font-extrabold text-purple-950 bg-purple-100 px-3.5 py-1.5 rounded-xl border border-purple-300">
+                                    ⭕ اقرأ القصة واستمع للنطق المتزامن ثم ضع دائرة (8 أسئلة: 12 – 19)
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- شريط القارئ الصوتي المتزامن المتوافق مع GitHub Pages -->
+                        <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white rounded-2xl p-3 sm:p-4 mb-5 shadow-lg border-2 border-purple-300 no-print">
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <!-- أزرار التشغيل والإيقاف المؤقت والإعادة -->
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <button type="button" id="playStoryBtn" onclick="toggleStoryPlayback()" class="bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 font-black px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-2 shadow-md transition active:scale-95">
+                                        <span id="playStoryIcon" class="text-base">▶️</span>
+                                        <span id="playStoryText">استمع لقراءة القصة (متزامن مع النص)</span>
+                                        <span id="soundWaveIndicator" class="hidden items-center gap-0.5 h-4 ml-1">
+                                            <span class="wave-bar"></span>
+                                            <span class="wave-bar"></span>
+                                            <span class="wave-bar"></span>
+                                            <span class="wave-bar"></span>
+                                        </span>
+                                    </button>
+
+                                    <button type="button" id="stopStoryBtn" onclick="stopStoryPlayback()" class="hidden bg-white/15 hover:bg-rose-600 text-white font-extrabold px-3 py-2 rounded-xl text-xs sm:text-sm items-center gap-1.5 border border-white/20 transition">
+                                        <span>⏹️</span>
+                                        <span>إعادة من البداية</span>
+                                    </button>
+                                </div>
+
+                                <!-- اختيار أفضل صوت + التحكم في السرعة -->
+                                <div class="flex flex-wrap items-center gap-2 text-xs">
+                                    <div class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/20">
+                                        <span class="text-amber-300 font-extrabold">🎙️ الصوت:</span>
+                                        <select id="voiceSelector" onchange="handleVoiceChange()" dir="ltr" class="bg-transparent text-white font-bold focus:outline-none text-xs max-w-[175px] sm:max-w-[210px] cursor-pointer">
+                                            <option value="" class="text-slate-900">جاري اختيار أفضل صوت طبيعي...</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="flex items-center gap-1 bg-white/10 px-2.5 py-1.5 rounded-xl border border-white/20" dir="ltr">
+                                        <span class="text-amber-300 font-extrabold mr-1">Speed:</span>
+                                        <button type="button" onclick="setReadingSpeed(0.75)" id="speed-0.75" class="speed-btn px-2 py-0.5 rounded-lg font-extrabold text-[11px] bg-white/10 hover:bg-white/20 transition">0.75x</button>
+                                        <button type="button" onclick="setReadingSpeed(0.88)" id="speed-0.88" class="speed-btn px-2 py-0.5 rounded-lg font-extrabold text-[11px] bg-amber-400 text-slate-950 shadow transition">Normal</button>
+                                        <button type="button" onclick="setReadingSpeed(1.0)" id="speed-1" class="speed-btn px-2 py-0.5 rounded-lg font-extrabold text-[11px] bg-white/10 hover:bg-white/20 transition">1.0x</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- شريط تقدم القراءة المتزامنة + تلميح التفاعل -->
+                            <div class="mt-3 flex items-center gap-3">
+                                <div class="flex-1 bg-white/15 h-2 rounded-full overflow-hidden">
+                                    <div id="storySyncProgressBar" class="bg-gradient-to-r from-amber-300 via-yellow-400 to-emerald-400 h-full rounded-full transition-all duration-150" style="width: 0%"></div>
+                                </div>
+                                <span id="storySyncStatus" class="text-[11px] font-bold text-amber-200 whitespace-nowrap">
+                                    💡 اضغط على أي كلمة في النص لسماع نطقها الفوري
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- بطاقة القصة المصورة المطابقة للورقة الثانية مع التزامن الصوتي للكلمات -->
+                        <div class="border-[3px] border-purple-400 rounded-3xl p-4 sm:p-6 bg-gradient-to-br from-white via-purple-50/20 to-emerald-50/40 mb-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center" dir="ltr">
+                            <!-- النص القرائي التفاعلي المتزامن كلمة بكلمة -->
+                            <div id="storyTextContainer" class="lg:col-span-7 space-y-3.5 en-font text-slate-900 font-bold text-sm sm:text-[16px] leading-relaxed select-none">
+                                <!-- يتم توليد فقرات وكلمات القصة برمجياً لدعم التزامن الدقيق على GitHub -->
+                            </div>
+
+                            <!-- اللوحة الفنية التوضيحية للقصة (تتفاعل وتضيء عند ذكر الحيوان في الصوت) -->
+                            <div class="lg:col-span-5">
+                                <div class="rounded-2xl overflow-hidden border-2 border-emerald-300 shadow-md bg-gradient-to-b from-sky-200 via-emerald-100 to-emerald-300 p-3 relative">
+                                    <svg viewBox="0 0 320 260" class="w-full h-auto drop-shadow-sm">
+                                        <!-- السماء والغيوم -->
+                                        <circle cx="60" cy="40" r="22" fill="#ffffff" fill-opacity="0.8"/>
+                                        <circle cx="85" cy="42" r="18" fill="#ffffff" fill-opacity="0.8"/>
+                                        <circle cx="260" cy="35" r="20" fill="#ffffff" fill-opacity="0.7"/>
+                                        <!-- تلال عشبية -->
+                                        <path d="M0 160 Q90 120 190 155 T320 145 L320 260 L0 260 Z" fill="#86efac"/>
+                                        <path d="M0 195 Q130 165 320 190 L320 260 L0 260 Z" fill="#4ade80"/>
+
+                                        <!-- الفراشة البرتقالية الجميلة (Butterfly) -->
+                                        <g id="svg-animal-butterfly" onclick="speakWordWithMeaning('butterfly')" class="svg-story-item cursor-pointer" transform="translate(185, 18)">
+                                            <path d="M40 38 C10 2 2 28 24 46 C8 56 18 76 40 52 Z" fill="#f97316" stroke="#1e293b" stroke-width="3"/>
+                                            <path d="M44 38 C74 2 82 28 60 46 C76 56 66 76 44 52 Z" fill="#f97316" stroke="#1e293b" stroke-width="3"/>
+                                            <circle cx="24" cy="26" r="4" fill="#fef08a"/>
+                                            <circle cx="60" cy="26" r="4" fill="#fef08a"/>
+                                            <ellipse cx="42" cy="46" rx="3.5" ry="16" fill="#1e293b"/>
+                                            <path d="M40 30 Q34 20 28 22 M44 30 Q50 20 56 22" stroke="#1e293b" stroke-width="2" fill="none"/>
+                                        </g>
+
+                                        <!-- السلحفاة (Tortoise) -->
+                                        <g id="svg-animal-tortoise" onclick="speakWordWithMeaning('tortoise')" class="svg-story-item cursor-pointer" transform="translate(28, 72)">
+                                            <ellipse cx="52" cy="48" rx="44" ry="26" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+                                            <path d="M16 48 Q52 16 88 48 Z" fill="#a16207" stroke="#451a03" stroke-width="2.5"/>
+                                            <polygon points="36,34 52,26 68,34 62,46 42,46" fill="#ca8a04" stroke="#451a03" stroke-width="1.8"/>
+                                            <!-- الرأس والأرجل -->
+                                            <path d="M92 42 Q114 34 112 48 Q110 56 90 52 Z" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                                            <circle cx="105" cy="44" r="2.5" fill="#1e293b"/>
+                                            <rect x="20" y="52" width="12" height="16" rx="5" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                                            <rect x="68" y="52" width="12" height="16" rx="5" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                                        </g>
+
+                                        <!-- الخنفساء الصغيرة على ورقة خضراء (Beetle on a green leaf) -->
+                                        <g id="svg-animal-beetle" onclick="speakWordWithMeaning('beetle')" class="svg-story-item cursor-pointer" transform="translate(18, 150)">
+                                            <path d="M5 35 Q35 5 75 20 Q55 55 5 35 Z" fill="#15803d" stroke="#14532d" stroke-width="2"/>
+                                            <path d="M8 34 Q40 24 72 20" stroke="#86efac" stroke-width="1.8" fill="none"/>
+                                            <ellipse cx="40" cy="24" rx="11" ry="8" fill="#1e3a8a" stroke="#0f172a" stroke-width="2"/>
+                                            <circle cx="51" cy="22" r="4.5" fill="#0f172a"/>
+                                            <line x1="36" y1="16" x2="32" y2="10" stroke="#0f172a" stroke-width="2"/>
+                                            <line x1="42" y1="16" x2="42" y2="9" stroke="#0f172a" stroke-width="2"/>
+                                            <line x1="36" y1="32" x2="32" y2="38" stroke="#0f172a" stroke-width="2"/>
+                                            <line x1="44" y1="32" x2="44" y2="38" stroke="#0f172a" stroke-width="2"/>
+                                        </g>
+
+                                        <!-- كتاب الطبيعة والحقيبة (NATURE BOOK & Bag) -->
+                                        <g id="svg-animal-book" onclick="speakWordWithMeaning('nature book')" class="svg-story-item cursor-pointer" transform="translate(215, 102)">
+                                            <rect x="18" y="28" width="68" height="58" rx="12" fill="#dc2626" stroke="#7f1d1d" stroke-width="2.5"/>
+                                            <rect x="6" y="8" width="66" height="72" rx="6" fill="#15803d" stroke="#14532d" stroke-width="2.5"/>
+                                            <rect x="10" y="74" width="62" height="7" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+                                            <text x="39" y="36" text-anchor="middle" fill="#ffffff" font-weight="900" font-size="10" font-family="Nunito">NATURE</text>
+                                            <text x="39" y="50" text-anchor="middle" fill="#fef08a" font-weight="900" font-size="10" font-family="Nunito">BOOK</text>
+                                        </g>
+
+                                        <!-- النمر البري (Tiger) -->
+                                        <g id="svg-animal-tiger" onclick="speakWordWithMeaning('tiger')" class="svg-story-item cursor-pointer" transform="translate(105, 165)">
+                                            <!-- الجسم -->
+                                            <rect x="28" y="28" width="76" height="36" rx="14" fill="#fb923c" stroke="#9a3412" stroke-width="2.5"/>
+                                            <!-- خطوط النمر السوداء -->
+                                            <path d="M45 28 L42 46 M60 28 L57 48 M75 28 L72 46 M90 28 L87 45" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
+                                            <!-- الأرجل -->
+                                            <rect x="32" y="58" width="11" height="24" rx="4" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <rect x="50" y="58" width="11" height="24" rx="4" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <rect x="76" y="58" width="11" height="24" rx="4" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <rect x="92" y="58" width="11" height="24" rx="4" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <!-- الذيل -->
+                                            <path d="M104 36 Q128 28 124 52" stroke="#fb923c" stroke-width="7" fill="none" stroke-linecap="round"/>
+                                            <path d="M104 36 Q128 28 124 52" stroke="#1e293b" stroke-width="3" stroke-dasharray="4 5" fill="none"/>
+                                            <!-- الرأس -->
+                                            <circle cx="24" cy="26" r="18" fill="#fb923c" stroke="#9a3412" stroke-width="2.5"/>
+                                            <circle cx="12" cy="11" r="6" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <circle cx="34" cy="11" r="6" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>
+                                            <ellipse cx="22" cy="32" rx="10" ry="7" fill="#fff7ed"/>
+                                            <circle cx="18" cy="22" r="2.5" fill="#1e293b"/>
+                                            <circle cx="29" cy="22" r="2.5" fill="#1e293b"/>
+                                            <polygon points="20,28 26,28 23,32" fill="#f43f5e"/>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- شبكة الأسئلة الـ 8 (ضع دائرة حول الإجابة الصحيحة) -->
+                        <div id="sec4Grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 en-font" dir="ltr"></div>
+                    </section>
+                </div>
+
+                <!-- ========================================================================= -->
+                <!-- بطاقة تقرير نتيجة ومستوى الطالب المعتمدة للطباعة (من 19 درجة)               -->
+                <!-- ========================================================================= -->
+                <section id="resultReportCard" class="hidden bg-white rounded-3xl shadow-2xl border-4 border-emerald-400 p-6 sm:p-8 print-container page-break-avoid">
+                    <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-emerald-100 pb-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-emerald-100 text-emerald-700 p-3 rounded-2xl text-2xl">🏆</div>
+                            <div>
+                                <span class="text-xs font-extrabold bg-amber-100 text-amber-900 px-3 py-1 rounded-full">تقرير تحديد المستوى المعتمد (19 سؤالاً)</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900 mt-1">بطاقة نتيجة وتقييم مستوى الطالب</h2>
+                            </div>
+                        </div>
+                        <div class="text-left text-xs text-slate-500 font-bold" id="reportDate"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <div class="text-xs text-slate-500 font-bold">اسم الطالب</div>
+                            <div id="reportStudentName" class="text-lg font-extrabold text-slate-900 mt-1">غير محدد</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <div class="text-xs text-slate-500 font-bold">الدرجة النهائية</div>
+                            <div id="reportFinalScore" class="text-2xl font-extrabold text-emerald-700 en-font mt-0.5">0 / 19</div>
+                            <div id="reportPercentage" class="text-xs font-bold text-slate-500 mt-0.5">النسبة المئوية: 0%</div>
+                        </div>
+                        <div id="reportLevelBadgeBox" class="bg-emerald-50 p-4 rounded-2xl border border-emerald-200">
+                            <div class="text-xs text-emerald-700 font-bold">المستوى العام</div>
+                            <div id="reportFinalLevel" class="text-lg font-extrabold text-emerald-900 mt-1">--</div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-extrabold text-sm text-slate-700 mb-3">تحليل أداء الطالب في المهارات الأربع:</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" id="skillsBreakdown"></div>
+
+                    <div class="bg-gradient-to-r from-emerald-50 to-amber-50 rounded-2xl p-4 border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <div class="text-xs font-extrabold text-emerald-950 mb-1">💡 التوصية التربوية:</div>
+                            <p id="reportRecommendation" class="text-sm font-bold text-slate-700"></p>
+                        </div>
+                        <div class="border-r-2 border-emerald-300 pr-4 whitespace-nowrap text-right">
+                            <div class="text-xs text-slate-500 font-bold">إعداد وإشراف معلم المادة:</div>
+                            <div class="text-base font-extrabold text-emerald-950">الأستاذ ماجد السويهري</div>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const TOTAL_QUESTIONS = 19;
+
+        // بيانات القسم الأول (السؤال 1: التوصيل بالسهم - 3 أسئلة: 1 إلى 3)
+        const sec1Data = [
+            { qNum: 1, correctLetter: 'c', rightText: 'c. I am a zoologist.' },
+            { qNum: 2, correctLetter: 'a', rightText: 'a. I work in a zoo.' },
+            { qNum: 3, correctLetter: 'b', rightText: "b. Because they're so much fun to talk to." }
+        ];
+
+        // رسومات القسم الثاني (السؤال 2: ضع الكلمة تحت الصورة المناسبة - 4 أسئلة: 4 إلى 7)
+        const sec2SVGs = {
+            zoo: `<svg viewBox="0 0 140 110" class="w-28 h-24 mx-auto">
+                <!-- سقف حديقة الحيوان البرتقالي -->
+                <polygon points="10,22 130,22 122,10 18,10" fill="#ea580c" stroke="#9a3412" stroke-width="2"/>
+                <rect x="14" y="22" width="6" height="76" fill="#b45309"/>
+                <rect x="120" y="22" width="6" height="76" fill="#b45309"/>
+                <!-- أشجار خضراء -->
+                <circle cx="55" cy="48" r="18" fill="#22c55e"/>
+                <circle cx="82" cy="52" r="16" fill="#16a34a"/>
+                <!-- زرافة -->
+                <rect x="24" y="42" width="7" height="36" rx="3" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                <circle cx="28" cy="40" r="6" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+                <circle cx="27" cy="52" r="2" fill="#a16207"/>
+                <circle cx="27" cy="62" r="2" fill="#a16207"/>
+                <!-- فرس النهر وفيل -->
+                <circle cx="66" cy="74" r="13" fill="#818cf8" stroke="#4f46e5" stroke-width="1.5"/>
+                <circle cx="98" cy="72" r="15" fill="#f472b6" stroke="#db2777" stroke-width="1.5"/>
+                <!-- قرد فوق السقف -->
+                <circle cx="96" cy="12" r="6" fill="#78350f"/>
+                <!-- سور الحديقة -->
+                <rect x="12" y="78" width="116" height="18" fill="none" stroke="#a16207" stroke-width="2.5"/>
+                <line x1="35" y1="78" x2="35" y2="96" stroke="#a16207" stroke-width="2.5"/>
+                <line x1="60" y1="78" x2="60" y2="96" stroke="#a16207" stroke-width="2.5"/>
+                <line x1="85" y1="78" x2="85" y2="96" stroke="#a16207" stroke-width="2.5"/>
+                <line x1="110" y1="78" x2="110" y2="96" stroke="#a16207" stroke-width="2.5"/>
+            </svg>`,
+            look_after: `<svg viewBox="0 0 140 110" class="w-28 h-24 mx-auto">
+                <!-- وسادة وسرير الطفل المريض -->
+                <rect x="16" y="46" width="60" height="34" rx="8" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="2"/>
+                <circle cx="48" cy="60" r="14" fill="#fed7aa" stroke="#9a3412" stroke-width="1.8"/>
+                <!-- خدود حمراء وكمادة -->
+                <circle cx="42" cy="63" r="3" fill="#fb7185"/>
+                <circle cx="54" cy="63" r="3" fill="#fb7185"/>
+                <rect x="40" y="47" width="16" height="6" rx="2" fill="#ffffff" stroke="#94a3b8" stroke-width="1"/>
+                <!-- الأم/الممرضة تعتني بالطفل -->
+                <circle cx="94" cy="36" r="15" fill="#fed7aa" stroke="#9a3412" stroke-width="1.8"/>
+                <path d="M78 34 C78 16 112 16 112 36" fill="#451a03"/>
+                <path d="M78 86 L84 52 H108 L114 86 Z" fill="#334155"/>
+                <!-- يد الحنان تمتد لرأس الطفل -->
+                <path d="M84 58 Q68 50 56 50" stroke="#fed7aa" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <path d="M14 76 Q70 68 122 86 L122 98 L14 98 Z" fill="#fff1f2" stroke="#fecdd3" stroke-width="2"/>
+            </svg>`,
+            zoologist: `<svg viewBox="0 0 140 110" class="w-28 h-24 mx-auto">
+                <!-- عالم الحيوان يرتدي قبعة وزي رسمي ويطعم الغزال والأرانب -->
+                <ellipse cx="70" cy="96" rx="58" ry="6" fill="#bbf7d0"/>
+                <!-- الغزال -->
+                <rect x="24" y="64" width="22" height="14" rx="5" fill="#a16207"/>
+                <line x1="27" y1="78" x2="27" y2="94" stroke="#78350f" stroke-width="3"/>
+                <line x1="42" y1="78" x2="42" y2="94" stroke="#78350f" stroke-width="3"/>
+                <path d="M42 66 L48 48 L54 50 L46 68 Z" fill="#a16207"/>
+                <path d="M47 48 L43 38 M49 48 L53 38" stroke="#78350f" stroke-width="2"/>
+                <!-- عالم الحيوان (Zoologist) -->
+                <circle cx="72" cy="26" r="9" fill="#fed7aa"/>
+                <ellipse cx="72" cy="18" rx="14" ry="4" fill="#d97706"/>
+                <rect x="63" y="35" width="18" height="24" rx="4" fill="#d97706"/>
+                <rect x="64" y="58" width="7" height="34" fill="#14532d"/>
+                <rect x="73" y="58" width="7" height="34" fill="#14532d"/>
+                <line x1="80" y1="42" x2="96" y2="48" stroke="#fed7aa" stroke-width="4" stroke-linecap="round"/>
+                <!-- أرانب وسناجب صغيرة -->
+                <ellipse cx="94" cy="88" rx="6" ry="8" fill="#a8a29e"/>
+                <ellipse cx="108" cy="90" rx="7" ry="6" fill="#b45309"/>
+            </svg>`,
+            wink: `<svg viewBox="0 0 140 110" class="w-28 h-24 mx-auto">
+                <!-- فتاة لطيفة تغمز بعينها (wink) -->
+                <path d="M36 42 C36 10 104 10 104 42 L112 84 H28 Z" fill="#78350f"/>
+                <circle cx="70" cy="48" r="24" fill="#fed7aa" stroke="#9a3412" stroke-width="2"/>
+                <!-- الشعر الأمامي ومشبك الشعر الوردي -->
+                <path d="M46 40 Q70 22 94 40 Q84 20 56 22 Z" fill="#78350f"/>
+                <line x1="82" y1="32" x2="90" y2="28" stroke="#ec4899" stroke-width="4" stroke-linecap="round"/>
+                <!-- العين اليسرى مفتوحة والعين اليمنى تغمز (Wink) -->
+                <circle cx="59" cy="48" r="3.5" fill="#1e293b"/>
+                <path d="M76 48 Q82 42 88 48" stroke="#1e293b" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <!-- خدود وابتسامة -->
+                <circle cx="53" cy="55" r="4" fill="#fda4af"/>
+                <circle cx="87" cy="55" r="4" fill="#fda4af"/>
+                <path d="M63 57 Q70 64 78 57" stroke="#9a3412" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                <!-- الملابس -->
+                <path d="M48 96 L54 72 H86 L92 96 Z" fill="#d9f99d" stroke="#65a30d" stroke-width="2"/>
+                <rect x="56" y="76" width="28" height="20" rx="3" fill="#86198f"/>
+            </svg>`
+        };
+
+        const sec2Data = [
+            { qNum: 4, svg: sec2SVGs.zoo, correct: 'zoo', label: 'Picture 1' },
+            { qNum: 5, svg: sec2SVGs.look_after, correct: 'look after', label: 'Picture 2' },
+            { qNum: 6, svg: sec2SVGs.zoologist, correct: 'zoologist', label: 'Picture 3' },
+            { qNum: 7, svg: sec2SVGs.wink, correct: 'wink', label: 'Picture 4' }
+        ];
+
+        // رسومات القسم الثالث (السؤال 3: صح أم خطأ - 4 أسئلة: 8 إلى 11)
+        const sec3SVGs = {
+            point_tortoise: `<svg viewBox="0 0 180 100" class="w-40 h-24 mx-auto">
+                <!-- السلحفاة (وليست زرافة!) -->
+                <ellipse cx="52" cy="58" rx="34" ry="22" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+                <path d="M22 58 Q52 26 82 58 Z" fill="#a16207" stroke="#451a03" stroke-width="2"/>
+                <circle cx="90" cy="52" r="9" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                <circle cx="93" cy="50" r="2" fill="#1e293b"/>
+                <rect x="28" y="66" width="10" height="14" rx="4" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                <rect x="64" y="66" width="10" height="14" rx="4" fill="#65a30d" stroke="#365314" stroke-width="2"/>
+                <!-- الولد يشير بإصبعه -->
+                <circle cx="148" cy="48" r="15" fill="#fed7aa" stroke="#9a3412" stroke-width="2"/>
+                <path d="M133 44 C133 26 164 26 164 44" fill="#0f172a"/>
+                <circle cx="143" cy="48" r="2.5" fill="#0f172a"/>
+                <circle cx="153" cy="48" r="2.5" fill="#0f172a"/>
+                <path d="M144 55 Q148 60 153 55" stroke="#9a3412" stroke-width="2" fill="none"/>
+                <line x1="135" y1="62" x2="112" y2="58" stroke="#fed7aa" stroke-width="6" stroke-linecap="round"/>
+                <path d="M136 62 L162 62 L166 86 L132 86 Z" fill="#84cc16"/>
+            </svg>`,
+            look_after_cat: `<svg viewBox="0 0 180 100" class="w-40 h-24 mx-auto">
+                <!-- الولد يربت ويعتني بقطته البرتقالية -->
+                <circle cx="105" cy="24" r="11" fill="#fed7aa" stroke="#9a3412" stroke-width="1.8"/>
+                <path d="M94 22 C94 10 116 10 116 22" fill="#0f172a"/>
+                <path d="M90 36 Q112 32 128 56 L102 68 L84 48 Z" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.8"/>
+                <line x1="90" y1="42" x2="66" y2="56" stroke="#fed7aa" stroke-width="5" stroke-linecap="round"/>
+                <!-- القطة البرتقالية -->
+                <ellipse cx="58" cy="74" rx="12" ry="15" fill="#fb923c" stroke="#c2410c" stroke-width="1.8"/>
+                <circle cx="60" cy="56" r="10" fill="#fb923c" stroke="#c2410c" stroke-width="1.8"/>
+                <polygon points="51,50 55,42 60,48" fill="#fb923c" stroke="#c2410c" stroke-width="1.5"/>
+                <polygon points="62,48 67,42 69,50" fill="#fb923c" stroke="#c2410c" stroke-width="1.5"/>
+                <path d="M46 82 Q34 76 38 64" stroke="#fb923c" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </svg>`,
+            butterfly_water: `<svg viewBox="0 0 180 100" class="w-40 h-24 mx-auto">
+                <!-- بركة الماء العشبية -->
+                <ellipse cx="95" cy="68" rx="68" ry="22" fill="#84cc16"/>
+                <ellipse cx="95" cy="68" rx="52" ry="15" fill="#7dd3fc" stroke="#a16207" stroke-width="3"/>
+                <!-- فراشة وردية بجانب الماء (وليست خنفساء!) -->
+                <g transform="translate(18, 18)">
+                    <path d="M24 24 C4 2 0 20 16 30 C4 38 12 50 24 34 Z" fill="#f472b6" stroke="#db2777" stroke-width="1.8"/>
+                    <path d="M26 24 C46 2 50 20 34 30 C46 38 38 50 26 34 Z" fill="#f9a8d4" stroke="#db2777" stroke-width="1.8"/>
+                    <ellipse cx="25" cy="29" rx="2" ry="10" fill="#831843"/>
+                </g>
+            </svg>`,
+            farmer_wheelbarrow: `<svg viewBox="0 0 180 100" class="w-40 h-24 mx-auto">
+                <!-- مزارع يدفع عربة خضروات وبطيخ (وليس عالم حيوان!) -->
+                <circle cx="112" cy="18" r="8" fill="#fed7aa"/>
+                <ellipse cx="112" cy="12" rx="13" ry="3.5" fill="#eab308"/>
+                <rect x="102" y="26" width="20" height="24" rx="4" fill="#0284c7"/>
+                <rect x="104" y="50" width="7" height="28" fill="#1e293b"/>
+                <rect x="113" y="50" width="7" height="28" fill="#1e293b"/>
+                <!-- عربة اليد الحمراء والبطيخ -->
+                <circle cx="62" cy="62" r="8" fill="#15803d"/>
+                <circle cx="76" cy="60" r="8" fill="#16a34a"/>
+                <circle cx="88" cy="63" r="7" fill="#ea580c"/>
+                <polygon points="46,62 98,62 90,78 54,78" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+                <line x1="94" y1="65" x2="112" y2="52" stroke="#78350f" stroke-width="3"/>
+                <circle cx="56" cy="84" r="9" fill="#334155" stroke="#0f172a" stroke-width="2.5"/>
+                <circle cx="56" cy="84" r="3" fill="#cbd5e1"/>
+            </svg>`
+        };
+
+        const sec3Data = [
+            { qNum: 8, numLabel: 1, text: 'He points to a giraffe .', svg: sec3SVGs.point_tortoise, correct: 'false' },
+            { qNum: 9, numLabel: 2, text: 'He looks after his cat.', svg: sec3SVGs.look_after_cat, correct: 'true' },
+            { qNum: 10, numLabel: 3, text: 'There is a beetle near the water.', svg: sec3SVGs.butterfly_water, correct: 'false' },
+            { qNum: 11, numLabel: 4, text: 'He is a zoologist .', svg: sec3SVGs.farmer_wheelbarrow, correct: 'false' }
+        ];
+
+        // بيانات القسم الرابع (السؤال 4: اقرأ القصة وضع دائرة حول الإجابة الصحيحة - 8 أسئلة: 12 إلى 19)
+        const sec4Data = [
+            {
+                qNum: 12,
+                numLabel: 1,
+                question: 'What does Sara like?',
+                options: [
+                    { key: 'a', text: 'a. Creatures' },
+                    { key: 'b', text: 'b. Houses' },
+                    { key: 'c', text: 'c. Bags' }
+                ],
+                correct: 'a'
+            },
+            {
+                qNum: 13,
+                numLabel: 2,
+                question: 'How does the tortoise move?',
+                options: [
+                    { key: 'a', text: 'a. Quickly' },
+                    { key: 'b', text: 'b. Quietly' },
+                    { key: 'c', text: 'c. Slowly' }
+                ],
+                correct: 'c'
+            },
+            {
+                qNum: 14,
+                numLabel: 3,
+                question: 'What does Sara have at school?',
+                options: [
+                    { key: 'a', text: 'a. A nature book' },
+                    { key: 'b', text: 'b. A tiger' },
+                    { key: 'c', text: 'c. A tortoise' }
+                ],
+                correct: 'a'
+            },
+            {
+                qNum: 15,
+                numLabel: 4,
+                question: 'Where does the beetle stand?',
+                options: [
+                    { key: 'a', text: 'a. In a bag' },
+                    { key: 'b', text: 'b. On a leaf' },
+                    { key: 'c', text: 'c. In a book' }
+                ],
+                correct: 'b'
+            },
+            {
+                qNum: 16,
+                numLabel: 5,
+                question: 'Which animal has wings?',
+                options: [
+                    { key: 'a', text: 'a. A beetle' },
+                    { key: 'b', text: 'b. A butterfly' },
+                    { key: 'c', text: 'c. A tortoise' }
+                ],
+                correct: 'b'
+            },
+            {
+                qNum: 17,
+                numLabel: 6,
+                question: 'What kind of animal is a tiger?',
+                options: [
+                    { key: 'a', text: 'a. Small' },
+                    { key: 'b', text: 'b. Extinct' },
+                    { key: 'c', text: 'c. Wild' }
+                ],
+                correct: 'c'
+            },
+            {
+                qNum: 18,
+                numLabel: 7,
+                question: 'What does Sara learn about dinosaurs?',
+                options: [
+                    { key: 'a', text: 'a. They have wings.' },
+                    { key: 'b', text: 'b. They are extinct.' },
+                    { key: 'c', text: 'c. They are small.' }
+                ],
+                correct: 'b'
+            },
+            {
+                qNum: 19,
+                numLabel: 8,
+                question: 'How does Sara feel at the end?',
+                options: [
+                    { key: 'a', text: 'a. Happy' },
+                    { key: 'b', text: 'b. Angry' },
+                    { key: 'c', text: 'c. Sad' }
+                ],
+                correct: 'a'
+            }
+        ];
+
+        // حالة إجابات الطالب للـ 19 سؤالاً
+        let userAnswers = {};
+        for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+            userAnswers[i] = null;
+        }
+        let activeMatchSource = null;
+        let selectedWordFromBank = null;
+        let isSubmitted = false;
+
+        function renderSections() {
+            // Render Section 2 (4 Pictures with handwriting lines)
+            const sec2Grid = document.getElementById('sec2Grid');
+            sec2Grid.innerHTML = '';
+            sec2Data.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `qRow-${item.qNum}`;
+                card.className = "bg-white rounded-2xl border-2 border-emerald-200 p-3 flex flex-col items-center justify-between shadow-sm hover:border-emerald-400 transition";
+                card.innerHTML = `
+                    <div class="w-full flex items-center justify-between mb-1">
+                        <span class="text-[11px] font-black bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full">#${item.qNum}</span>
+                        <button type="button" onclick="clearPictureWord(${item.qNum})" class="text-[11px] text-slate-400 hover:text-rose-600 font-bold no-print">مسح ✕</button>
+                    </div>
+                    <div class="my-1 p-2 bg-emerald-50/40 rounded-xl w-full flex items-center justify-center">
+                        ${item.svg}
+                    </div>
+                    <div id="picSlot-${item.qNum}"
+                         ondragover="event.preventDefault()"
+                         ondrop="onSlotDrop(event, ${item.qNum})"
+                         onclick="onSlotClick(${item.qNum})"
+                         class="lined-slot w-full mt-2 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center font-black text-lg text-emerald-800 px-2 text-center">
+                        <span class="text-xs font-bold text-slate-400 no-print">اضغط أو أفلت الكلمة هنا</span>
+                    </div>
+                    <span id="badge-${item.qNum}" class="hidden text-[11px] font-extrabold px-2.5 py-0.5 rounded-full mt-2" dir="rtl"></span>
+                `;
+                sec2Grid.appendChild(card);
+            });
+
+            // Render Section 3 (4 True / False Questions)
+            const sec3Grid = document.getElementById('sec3Grid');
+            sec3Grid.innerHTML = '';
+            sec3Data.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `qRow-${item.qNum}`;
+                card.className = "bg-white rounded-2xl border-2 border-teal-200 p-4 flex flex-col justify-between shadow-sm";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-black bg-teal-100 text-teal-900 px-2 py-0.5 rounded-lg">#${item.qNum}</span>
+                        <button type="button" onclick="speakText('${item.text}')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                    </div>
+                    <div class="my-2 bg-slate-50/80 rounded-xl p-2 border border-slate-100">
+                        ${item.svg}
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                        <div class="font-extrabold text-slate-900 text-sm sm:text-base">
+                            ${item.numLabel}- ${item.text}
+                        </div>
+                        <div class="flex items-center gap-1.5 font-black text-slate-700">
+                            <span>(</span>
+                            <button type="button" id="tfBtn-${item.qNum}-true" onclick="selectTrueFalse(${item.qNum}, 'true')" class="tf-btn text-emerald-600" title="True (صح)">✓</button>
+                            <button type="button" id="tfBtn-${item.qNum}-false" onclick="selectTrueFalse(${item.qNum}, 'false')" class="tf-btn text-rose-600" title="False (خطأ)">✗</button>
+                            <span>)</span>
+                        </div>
+                    </div>
+                    <div class="mt-1 text-right">
+                        <span id="badge-${item.qNum}" class="hidden text-[11px] font-extrabold px-2.5 py-0.5 rounded-full" dir="rtl"></span>
+                    </div>
+                `;
+                sec3Grid.appendChild(card);
+            });
+
+            // Render Section 4 (8 Reading Comprehension Questions)
+            const sec4Grid = document.getElementById('sec4Grid');
+            sec4Grid.innerHTML = '';
+            sec4Data.forEach(item => {
+                const card = document.createElement('div');
+                card.id = `qRow-${item.qNum}`;
+                card.className = "bg-white rounded-2xl border-2 border-dashed border-purple-300 p-4 shadow-sm hover:border-purple-500 transition";
+
+                const optsHtml = item.options.map(opt => `
+                    <div id="circleOpt-${item.qNum}-${opt.key}" onclick="selectCircleChoice(${item.qNum}, '${opt.key}')" class="circle-choice text-sm sm:text-base font-bold text-slate-800">
+                        <span>${opt.text}</span>
+                        <span class="text-xs text-purple-600 font-black opacity-0 circle-check-mark">⭕</span>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 mb-2.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-purple-700 text-white font-black text-xs flex items-center justify-center shadow-sm">${item.numLabel}</span>
+                            <h3 class="font-black text-slate-900 text-sm sm:text-base">${item.question}</h3>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[10px] font-black bg-purple-100 text-purple-900 px-1.5 py-0.5 rounded">#${item.qNum}</span>
+                            <button type="button" onclick="speakText('${item.question.replace(/'/g, '')}')" class="text-xs opacity-70 hover:opacity-100 no-print">🔊</button>
+                        </div>
+                    </div>
+                    <div class="space-y-1 pl-2">
+                        ${optsHtml}
+                    </div>
+                    <div class="mt-2 text-right">
+                        <span id="badge-${item.qNum}" class="hidden text-[11px] font-extrabold px-2.5 py-0.5 rounded-full" dir="rtl"></span>
+                    </div>
+                `;
+                sec4Grid.appendChild(card);
+            });
+        }
+
+        function initSidebarNavigation() {
+            const createNavBtn = (qNum) => {
+                const btn = document.createElement('button');
+                btn.id = `navBtn-${qNum}`;
+                btn.onclick = () => scrollToQuestion(qNum);
+                btn.className = "py-1.5 rounded-xl border border-slate-200 bg-white flex items-center justify-center font-extrabold text-xs hover:border-emerald-500 transition";
+                btn.innerHTML = `<span id="navDot-${qNum}" class="w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center en-font">${qNum}</span>`;
+                return btn;
+            };
+
+            const g1 = document.getElementById('navGridSec1');
+            for (let i = 1; i <= 3; i++) g1.appendChild(createNavBtn(i));
+
+            const g2 = document.getElementById('navGridSec2');
+            for (let i = 4; i <= 7; i++) g2.appendChild(createNavBtn(i));
+
+            const g3 = document.getElementById('navGridSec3');
+            for (let i = 8; i <= 11; i++) g3.appendChild(createNavBtn(i));
+
+            const g4 = document.getElementById('navGridSec4');
+            for (let i = 12; i <= 19; i++) g4.appendChild(createNavBtn(i));
+        }
+
+        // =========================================================================
+        // تفاعل السؤال الأول: التوصيل بالسهم (1–3)
+        // =========================================================================
+        function handleMatchLeftClick(qNum) {
+            if (isSubmitted) unlockForEditing();
+            activeMatchSource = qNum;
+            [1, 2, 3].forEach(n => {
+                const el = document.getElementById(`matchLeft-${n}`);
+                if (el) el.classList.toggle('active-source', n === qNum);
+            });
+        }
+
+        function handleMatchRightClick(targetLetter) {
+            if (isSubmitted) unlockForEditing();
+            if (!activeMatchSource) {
+                // إذا لم يختر الطالب سؤالاً بعد، نختار أول سؤال غير موصل تلقائياً
+                activeMatchSource = [1, 2, 3].find(n => !userAnswers[n]) || 1;
+            }
+
+            // إزالة أي ارتباط سابق بنفس الحرف لمنع التداخل
+            [1, 2, 3].forEach(n => {
+                if (userAnswers[n] === targetLetter && n !== activeMatchSource) {
+                    userAnswers[n] = null;
+                    document.getElementById(`matchLetterBox-${n}`).textContent = '--';
+                }
+            });
+
+            userAnswers[activeMatchSource] = targetLetter;
+            document.getElementById(`matchLetterBox-${activeMatchSource}`).textContent = targetLetter;
+
+            [1, 2, 3].forEach(n => {
+                const el = document.getElementById(`matchLeft-${n}`);
+                if (el) el.classList.remove('active-source');
+            });
+            activeMatchSource = null;
+
+            drawMatchArrows();
+            updateNavigationPanel();
+        }
+
+        function clearMatches() {
+            if (isSubmitted) unlockForEditing();
+            [1, 2, 3].forEach(n => {
+                userAnswers[n] = null;
+                document.getElementById(`matchLetterBox-${n}`).textContent = '--';
+                const el = document.getElementById(`matchLeft-${n}`);
+                if (el) el.classList.remove('active-source');
+            });
+            activeMatchSource = null;
+            drawMatchArrows();
+            updateNavigationPanel();
+        }
+
+        function drawMatchArrows() {
+            const svg = document.getElementById('matchSvgOverlay');
+            const container = document.getElementById('matchContainer');
+            if (!svg || !container) return;
+
+            // الاحتفاظ بتعريفات رؤوس الأسهم <defs>
+            const defs = svg.querySelector('defs').outerHTML;
+            svg.innerHTML = defs;
+
+            const containerRect = container.getBoundingClientRect();
+
+            [1, 2, 3].forEach(qNum => {
+                const targetLetter = userAnswers[qNum];
+                if (!targetLetter) return;
+
+                const leftAnchor = document.getElementById(`leftAnchor-${qNum}`);
+                const rightAnchor = document.getElementById(`rightAnchor-${targetLetter}`);
+                if (!leftAnchor || !rightAnchor) return;
+
+                const lRect = leftAnchor.getBoundingClientRect();
+                const rRect = rightAnchor.getBoundingClientRect();
+
+                const x1 = lRect.left + lRect.width / 2 - containerRect.left;
+                const y1 = lRect.top + lRect.height / 2 - containerRect.top;
+                const x2 = rRect.left + rRect.width / 2 - containerRect.left;
+                const y2 = rRect.top + rRect.height / 2 - containerRect.top;
+
+                let strokeColor = '#d97706';
+                let markerId = 'url(#arrow-amber)';
+
+                if (isSubmitted) {
+                    const correct = isQuestionCorrect(qNum);
+                    strokeColor = correct ? '#16a34a' : '#dc2626';
+                    markerId = correct ? 'url(#arrow-correct)' : 'url(#arrow-wrong)';
+                }
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2 - 6);
+                line.setAttribute('y2', y2);
+                line.setAttribute('stroke', strokeColor);
+                line.setAttribute('stroke-width', '3.5');
+                line.setAttribute('stroke-linecap', 'round');
+                line.setAttribute('marker-end', markerId);
+                svg.appendChild(line);
+            });
+        }
+
+        // =========================================================================
+        // تفاعل السؤال الثاني: السحب والإفلات أو الضغط لوضع الكلمة تحت الصورة (4–7)
+        // =========================================================================
+        function selectWordChip(word) {
+            if (isSubmitted) unlockForEditing();
+            selectedWordFromBank = word;
+            document.querySelectorAll('.word-chip').forEach(el => el.classList.remove('selected-chip'));
+            const idKey = word === 'look after' ? 'chip-lookafter' : `chip-${word}`;
+            const chip = document.getElementById(idKey);
+            if (chip) chip.classList.add('selected-chip');
+        }
+
+        function onChipDragStart(event, word) {
+            if (isSubmitted) unlockForEditing();
+            event.dataTransfer.setData('text/plain', word);
+            selectWordChip(word);
+        }
+
+        function onSlotDrop(event, qNum) {
+            event.preventDefault();
+            const word = event.dataTransfer.getData('text/plain') || selectedWordFromBank;
+            if (word) assignWordToPicture(qNum, word);
+        }
+
+        function onSlotClick(qNum) {
+            if (isSubmitted) unlockForEditing();
+            if (selectedWordFromBank) {
+                assignWordToPicture(qNum, selectedWordFromBank);
+            } else if (userAnswers[qNum]) {
+                clearPictureWord(qNum);
+            }
+        }
+
+        function assignWordToPicture(qNum, word) {
+            userAnswers[qNum] = word;
+            const slot = document.getElementById(`picSlot-${qNum}`);
+            if (slot) {
+                slot.textContent = word;
+                slot.className = "lined-slot w-full mt-2 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 flex items-center justify-center font-black text-lg text-emerald-900 px-2 text-center shadow-inner";
+            }
+            selectedWordFromBank = null;
+            document.querySelectorAll('.word-chip').forEach(el => el.classList.remove('selected-chip'));
+            updateNavigationPanel();
+        }
+
+        function clearPictureWord(qNum) {
+            if (isSubmitted) unlockForEditing();
+            userAnswers[qNum] = null;
+            const slot = document.getElementById(`picSlot-${qNum}`);
+            if (slot) {
+                slot.className = "lined-slot w-full mt-2 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center font-black text-lg text-emerald-800 px-2 text-center";
+                slot.innerHTML = `<span class="text-xs font-bold text-slate-400 no-print">اضغط أو أفلت الكلمة هنا</span>`;
+            }
+            updateNavigationPanel();
+        }
+
+        // =========================================================================
+        // تفاعل السؤال الثالث: صح أم خطأ (8–11)
+        // =========================================================================
+        function selectTrueFalse(qNum, val) {
+            if (isSubmitted) unlockForEditing();
+            userAnswers[qNum] = val;
+
+            const tBtn = document.getElementById(`tfBtn-${qNum}-true`);
+            const fBtn = document.getElementById(`tfBtn-${qNum}-false`);
+            if (tBtn && fBtn) {
+                tBtn.classList.toggle('active-true', val === 'true');
+                fBtn.classList.toggle('active-false', val === 'false');
+            }
+            updateNavigationPanel();
+        }
+
+        // =========================================================================
+        // تفاعل السؤال الرابع: وضع دائرة حول الإجابة الصحيحة (12–19)
+        // =========================================================================
+        function selectCircleChoice(qNum, optKey) {
+            if (isSubmitted) unlockForEditing();
+            userAnswers[qNum] = optKey;
+
+            const row = document.getElementById(`qRow-${qNum}`);
+            if (row) {
+                row.querySelectorAll('.circle-choice').forEach(el => {
+                    el.classList.remove('circled', 'correct-circle', 'wrong-circle');
+                    const mark = el.querySelector('.circle-check-mark');
+                    if (mark) mark.classList.add('opacity-0');
+                });
+            }
+
+            const target = document.getElementById(`circleOpt-${qNum}-${optKey}`);
+            if (target) {
+                target.classList.add('circled');
+                const mark = target.querySelector('.circle-check-mark');
+                if (mark) mark.classList.remove('opacity-0');
+            }
+
+            updateNavigationPanel();
+        }
+
+        // =========================================================================
+        // نظام الصوت الذكي والمزامنة الدقيقة بدون تكرار أو تقديم/تأخير (متوافق مع GitHub Pages)
+        // =========================================================================
+        const storyParagraphsData = [
+            [
+                { text: "Sara likes creatures.", boldFirst: true },
+                { text: "At school, she has a small nature book." },
+                { text: "One day, her teacher gives her a picture of a butterfly, a tortoise, a beetle, and a tiger." }
+            ],
+            [
+                { text: "Sara looks at the butterfly first." },
+                { text: "It has beautiful wings." },
+                { text: "Then she looks at the tortoise." },
+                { text: "It moves slowly." },
+                { text: "The beetle is small and stands on a green leaf." }
+            ],
+            [
+                { text: "Sara sees a picture of a tiger." },
+                { text: "She knows that tigers are not found in the park." },
+                { text: "They are wild animals." }
+            ],
+            [
+                { text: "Next, Sara reads about dinosaurs." },
+                { text: "She learns that dinosaurs are extinct." },
+                { text: "They can't be seen anymore." }
+            ],
+            [
+                { text: "At the end of the day, Sara puts her book in her bag." },
+                { text: "She is happy because she has learned about many creatures in nature." }
+            ]
+        ];
+
+        let flatSentences = [];
+        let totalStoryWords = 0;
+        let selectedVoice = null;
+        let availableEnglishVoices = [];
+        let readingSpeed = 0.88;
+
+        // متغيرات ضبط المزامنة الدقيقة ومنع التكرار
+        let isStoryPlaying = false;
+        let isStoryPaused = false;
+        let currentSentenceIdx = 0;
+        let syncRafId = null;
+        let playbackSessionToken = 0; // رمز جلسة لمنع تداخل أو تكرار الجمل
+        let lastHighlightedKey = "";  // يمنع تكرار تظليل نفس الكلمة أكثر من مرة
+        let activeUtteranceRef = null;
+        let adaptiveSpeedRatio = 1.0; // معايرة تلقائية لسرعة المتحدث الفعلي
+
+        // حساب عدد المقاطع الصوتية الفعلية للكلمة الإنجليزية لضبط زمن النطق بدقة
+        function countEnglishSyllables(word) {
+            let clean = word.toLowerCase().replace(/[^a-z]/g, '');
+            if (!clean) return 1;
+            if (clean.length <= 3) return 1;
+            clean = clean.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+            clean = clean.replace(/^y/, '');
+            const matches = clean.match(/[aeiouy]{1,2}/g);
+            return matches ? Math.max(1, matches.length) : 1;
+        }
+
+        // الكلمات الوظيفية القصيرة التي ينطقها المتحدث بسرعة طبيعية
+        const FAST_FUNCTION_WORDS = new Set([
+            'a', 'an', 'the', 'at', 'in', 'on', 'of', 'to', 'and', 'is', 'it', 'she', 'her', 'are', 'not', 'be', 'has'
+        ]);
+
+        // حساب الزمن الدقيق لنطق الكلمة + وقفة الفاصلة بعدها (بدون إضافة وقفة وهمية لنهاية الجملة)
+        function calculateWordTimingMs(wText, totalWordsInSent, wLocalIdx) {
+            const clean = wText.toLowerCase().replace(/[^a-z']/g, '');
+            const syllables = countEnglishSyllables(clean);
+            const isFastWord = FAST_FUNCTION_WORDS.has(clean);
+
+            // الزمن الأساسي لنطق الكلمة الواحدة بالملي ثانية عند السرعة القياسية 1.0
+            let speakMs = isFastWord
+                ? 155
+                : (145 + (syllables * 115) + Math.max(0, clean.length - 5) * 14);
+
+            // الكلمة الأولى في الجملة تبدأ فوراً، والكلمات الطويلة تأخذ حقها الطبيعي
+            if (wLocalIdx === 0) speakMs += 20;
+
+            // وقفة الفاصلة داخل الجملة تقع بعد نطق الكلمة التي تسبق الفاصلة مباشرة
+            let pauseAfterMs = 0;
+            if (/[,;]/.test(wText) && wLocalIdx < totalWordsInSent - 1) {
+                pauseAfterMs = 215;
+            }
+
+            return { speakMs, pauseAfterMs };
+        }
+
+        function buildInteractiveStoryDOM() {
+            const container = document.getElementById('storyTextContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            flatSentences = [];
+            totalStoryWords = 0;
+
+            let globalSentIdx = 0;
+            let globalWordCounter = 0;
+
+            storyParagraphsData.forEach((paraSentences) => {
+                const pEl = document.createElement('p');
+                pEl.className = "leading-relaxed";
+
+                paraSentences.forEach((sentObj) => {
+                    const sIdx = globalSentIdx++;
+                    const spanSent = document.createElement('span');
+                    spanSent.id = `story-sent-${sIdx}`;
+                    spanSent.className = `story-sentence ${sentObj.boldFirst ? 'text-purple-800 font-black' : ''}`;
+
+                    // توحيد النص لضمان تطابق فهارس الحروف (charIndex) بنسبة 100% مع محرك الصوت
+                    const rawWords = sentObj.text.trim().split(/\s+/);
+                    const normalizedSentenceText = rawWords.join(' ');
+                    const wordMetaList = [];
+                    let charCursor = 0;
+
+                    rawWords.forEach((wText, wLocalIdx) => {
+                        const wGlobalIdx = globalWordCounter++;
+                        totalStoryWords++;
+
+                        const wordSpan = document.createElement('span');
+                        wordSpan.id = `story-word-${sIdx}-${wLocalIdx}`;
+                        wordSpan.dataset.sidx = sIdx;
+                        wordSpan.dataset.widx = wLocalIdx;
+                        wordSpan.dataset.globalw = wGlobalIdx;
+                        wordSpan.className = "story-word";
+                        wordSpan.textContent = wText;
+                        wordSpan.title = "اضغط لسماع نطق الكلمة";
+
+                        wordSpan.onclick = (e) => {
+                            e.stopPropagation();
+                            onStoryWordClicked(sIdx, wLocalIdx, wText);
+                        };
+
+                        spanSent.appendChild(wordSpan);
+                        spanSent.appendChild(document.createTextNode(' '));
+
+                        const timing = calculateWordTimingMs(wText, rawWords.length, wLocalIdx);
+
+                        wordMetaList.push({
+                            text: wText,
+                            cleanWord: wText.toLowerCase().replace(/[^a-z']/g, ''),
+                            sIdx,
+                            wLocalIdx,
+                            wGlobalIdx,
+                            charStart: charCursor,
+                            charEnd: charCursor + wText.length,
+                            speakMs: timing.speakMs,
+                            pauseAfterMs: timing.pauseAfterMs
+                        });
+
+                        charCursor += wText.length + 1;
+                    });
+
+                    flatSentences.push({
+                        sIdx,
+                        text: normalizedSentenceText,
+                        words: wordMetaList
+                    });
+
+                    pEl.appendChild(spanSent);
+                    pEl.appendChild(document.createTextNode(' '));
+                });
+
+                container.appendChild(pEl);
+            });
+        }
+
+        // ترتيب الأصوات بحيث نختار الصوت الطبيعي الأعلى نقاءً والذي يدعم التزامن الفوري للكلمات
+        function scoreVoiceQuality(voice) {
+            if (!voice || !voice.lang) return -100;
+            const lang = voice.lang.toLowerCase();
+            if (!lang.startsWith('en')) return -100;
+
+            let score = 10;
+            const name = voice.name.toLowerCase();
+
+            // إعطاء أولوية قصوى للأصوات الطبيعية التي تدعم onboundary الدقيق بدون تأخير شبكي
+            if (name.includes('natural')) score += 130;
+            if (name.includes('neural')) score += 120;
+            if (name.includes('aria') || name.includes('ana') || name.includes('jenny')) score += 110;
+            if (name.includes('sonia') || name.includes('libby') || name.includes('guy') || name.includes('ryan')) score += 95;
+            if (name.includes('samantha') || name.includes('ava') || name.includes('allison') || name.includes('karen') || name.includes('daniel')) score += 92;
+
+            // الأصوات المحلية تدعم أحداث حدود الكلمات (onboundary) بدقة 100% على GitHub Pages
+            if (voice.localService) score += 45;
+
+            if (name.includes('premium') || name.includes('enhanced')) score += 75;
+            if (name.includes('google us english') || name.includes('google uk english')) score += 65;
+            if (name.includes('zira') || name.includes('david') || name.includes('mark')) score += 50;
+
+            if (lang === 'en-us' || lang === 'en_us') score += 25;
+            else if (lang === 'en-gb' || lang === 'en_gb') score += 20;
+
+            return score;
+        }
+
+        function initVoiceEngine() {
+            if (!('speechSynthesis' in window)) return;
+
+            const loadAndRankVoices = () => {
+                const allVoices = window.speechSynthesis.getVoices() || [];
+                if (!allVoices.length) return;
+
+                availableEnglishVoices = allVoices
+                    .filter(v => v.lang && v.lang.toLowerCase().startsWith('en'))
+                    .sort((a, b) => scoreVoiceQuality(b) - scoreVoiceQuality(a));
+
+                if (!availableEnglishVoices.length) {
+                    availableEnglishVoices = allVoices;
+                }
+
+                const selector = document.getElementById('voiceSelector');
+                if (selector && availableEnglishVoices.length) {
+                    const previousURI = selectedVoice ? selectedVoice.voiceURI : null;
+                    selector.innerHTML = '';
+
+                    availableEnglishVoices.slice(0, 12).forEach((v, idx) => {
+                        const opt = document.createElement('option');
+                        opt.value = v.voiceURI;
+                        opt.className = "text-slate-900 font-bold";
+                        const cleanName = v.name.replace(/Microsoft |Online \(Natural\) - |Desktop - /g, '');
+                        opt.textContent = `${idx === 0 ? '⭐ ' : '🎙️ '}${cleanName} (${v.lang})`;
+                        selector.appendChild(opt);
+                    });
+
+                    const restored = previousURI && availableEnglishVoices.find(v => v.voiceURI === previousURI);
+                    selectedVoice = restored || availableEnglishVoices[0];
+                    selector.value = selectedVoice.voiceURI;
+                }
+            };
+
+            loadAndRankVoices();
+            window.speechSynthesis.onvoiceschanged = loadAndRankVoices;
+            setTimeout(loadAndRankVoices, 250);
+            setTimeout(loadAndRankVoices, 900);
+        }
+
+        function handleVoiceChange() {
+            const selector = document.getElementById('voiceSelector');
+            if (!selector) return;
+            const chosen = availableEnglishVoices.find(v => v.voiceURI === selector.value);
+            if (chosen) {
+                selectedVoice = chosen;
+                adaptiveSpeedRatio = 1.0; // إعادة ضبط المعايرة للصوت الجديد
+                if (isStoryPlaying && !isStoryPaused) {
+                    startStoryFromSentence(currentSentenceIdx);
+                } else {
+                    speakText("Sara likes creatures.");
+                }
+            }
+        }
+
+        function setReadingSpeed(speed) {
+            readingSpeed = speed;
+            [0.75, 0.88, 1].forEach(s => {
+                const btn = document.getElementById(`speed-${s}`);
+                if (!btn) return;
+                if (Math.abs(s - speed) < 0.02) {
+                    btn.className = "speed-btn px-2 py-0.5 rounded-lg font-extrabold text-[11px] bg-amber-400 text-slate-950 shadow transition";
+                } else {
+                    btn.className = "speed-btn px-2 py-0.5 rounded-lg font-extrabold text-[11px] bg-white/10 hover:bg-white/20 text-white transition";
+                }
+            });
+
+            if (isStoryPlaying && !isStoryPaused) {
+                startStoryFromSentence(currentSentenceIdx);
+            }
+        }
+
+        // إبراز الكلمة الحالية مرة واحدة فقط دون أي تكرار أو رجوع للخلف
+        function highlightStoryWord(sIdx, wLocalIdx, forceHighlight = false) {
+            const key = `${sIdx}-${wLocalIdx}`;
+            if (!forceHighlight && key === lastHighlightedKey) return;
+            lastHighlightedKey = key;
+
+            // تحديث تظليل الجملة النشطة فقط عند تغيرها
+            const targetSentEl = document.getElementById(`story-sent-${sIdx}`);
+            if (targetSentEl && !targetSentEl.classList.contains('active-sentence')) {
+                document.querySelectorAll('.story-sentence.active-sentence').forEach(el => el.classList.remove('active-sentence'));
+                targetSentEl.classList.add('active-sentence');
+            }
+
+            // تحويل الكلمة السابقة إلى مقروءة وتظليل الكلمة الجديدة فقط
+            document.querySelectorAll('.story-word.active-word').forEach(el => {
+                el.classList.remove('active-word');
+                el.classList.add('spoken-word');
+            });
+
+            const wordEl = document.getElementById(`story-word-${sIdx}-${wLocalIdx}`);
+            if (wordEl) {
+                wordEl.classList.remove('spoken-word');
+                wordEl.classList.add('active-word');
+            }
+
+            const sentObj = flatSentences[sIdx];
+            if (sentObj && sentObj.words[wLocalIdx]) {
+                const wMeta = sentObj.words[wLocalIdx];
+                const pct = Math.min(100, Math.round(((wMeta.wGlobalIdx + 1) / totalStoryWords) * 100));
+                const pBar = document.getElementById('storySyncProgressBar');
+                if (pBar) pBar.style.width = `${pct}%`;
+
+                const statusEl = document.getElementById('storySyncStatus');
+                if (statusEl) {
+                    statusEl.textContent = `🔊 جاري القراءة: "${wMeta.text.replace(/[.,!?]/g, '')}" (${pct}%)`;
+                }
+
+                syncSvgIllustrationWithWord(wMeta.cleanWord);
+            }
+        }
+
+        function syncSvgIllustrationWithWord(cleanWord) {
+            const animalMap = {
+                'butterfly': 'svg-animal-butterfly',
+                'wings': 'svg-animal-butterfly',
+                'tortoise': 'svg-animal-tortoise',
+                'slowly': 'svg-animal-tortoise',
+                'beetle': 'svg-animal-beetle',
+                'leaf': 'svg-animal-beetle',
+                'tiger': 'svg-animal-tiger',
+                'tigers': 'svg-animal-tiger',
+                'wild': 'svg-animal-tiger',
+                'book': 'svg-animal-book',
+                'nature': 'svg-animal-book',
+                'bag': 'svg-animal-book'
+            };
+
+            const targetId = animalMap[cleanWord];
+            if (targetId) {
+                document.querySelectorAll('.svg-story-item').forEach(el => el.classList.remove('highlight-animal'));
+                const svgEl = document.getElementById(targetId);
+                if (svgEl) svgEl.classList.add('highlight-animal');
+            }
+        }
+
+        function cancelSyncAnimationLoop() {
+            if (syncRafId) {
+                cancelAnimationFrame(syncRafId);
+                syncRafId = null;
+            }
+        }
+
+        function clearAllStoryHighlights() {
+            cancelSyncAnimationLoop();
+            lastHighlightedKey = "";
+            document.querySelectorAll('.story-sentence').forEach(el => el.classList.remove('active-sentence'));
+            document.querySelectorAll('.story-word').forEach(el => el.classList.remove('active-word', 'spoken-word'));
+            document.querySelectorAll('.svg-story-item').forEach(el => el.classList.remove('highlight-animal'));
+        }
+
+        function toggleStoryPlayback() {
+            if (!('speechSynthesis' in window)) return;
+
+            if (isStoryPlaying && !isStoryPaused) {
+                // إيقاف مؤقت فوري مع إلغاء أي مؤقت نشط
+                isStoryPaused = true;
+                playbackSessionToken++;
+                cancelSyncAnimationLoop();
+                window.speechSynthesis.cancel();
+                updatePlayerButtonsUI();
+                const statusEl = document.getElementById('storySyncStatus');
+                if (statusEl) statusEl.textContent = "⏸️ تم الإيقاف المؤقت — اضغط متابعة لإكمال القراءة من نفس الجملة";
+                return;
+            }
+
+            if (isStoryPlaying && isStoryPaused) {
+                // استئناف القراءة من بداية الجملة الحالية بدقة
+                isStoryPaused = false;
+                updatePlayerButtonsUI();
+                startStoryFromSentence(currentSentenceIdx, false);
+                return;
+            }
+
+            startStoryFromSentence(0, true);
+        }
+
+        function startStoryFromSentence(startIndex, resetAllHighlights = true) {
+            playbackSessionToken++;
+            const currentToken = playbackSessionToken;
+
+            cancelSyncAnimationLoop();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            if (resetAllHighlights) {
+                clearAllStoryHighlights();
+            } else {
+                lastHighlightedKey = "";
+            }
+
+            isStoryPlaying = true;
+            isStoryPaused = false;
+            currentSentenceIdx = startIndex;
+            updatePlayerButtonsUI();
+
+            // مهلة قصيرة جداً (30ms) بعد cancel لمنع تداخل أحداث المتصفح القديم مع الجلسة الجديدة
+            setTimeout(() => {
+                if (currentToken === playbackSessionToken && isStoryPlaying && !isStoryPaused) {
+                    playSentenceAtIndex(startIndex, currentToken);
+                }
+            }, 30);
+        }
+
+        function stopStoryPlayback() {
+            playbackSessionToken++;
+            isStoryPlaying = false;
+            isStoryPaused = false;
+            currentSentenceIdx = 0;
+            cancelSyncAnimationLoop();
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            clearAllStoryHighlights();
+            const pBar = document.getElementById('storySyncProgressBar');
+            if (pBar) pBar.style.width = '0%';
+            const statusEl = document.getElementById('storySyncStatus');
+            if (statusEl) statusEl.textContent = "💡 اضغط على أي كلمة في النص لسماع نطقها الفوري";
+            updatePlayerButtonsUI();
+        }
+
+        function updatePlayerButtonsUI() {
+            const playIcon = document.getElementById('playStoryIcon');
+            const playText = document.getElementById('playStoryText');
+            const wave = document.getElementById('soundWaveIndicator');
+            const stopBtn = document.getElementById('stopStoryBtn');
+
+            if (!playIcon || !playText) return;
+
+            if (isStoryPlaying && !isStoryPaused) {
+                playIcon.textContent = "⏸️";
+                playText.textContent = "إيقاف مؤقت";
+                if (wave) {
+                    wave.classList.remove('hidden');
+                    wave.classList.add('inline-flex');
+                }
+                if (stopBtn) {
+                    stopBtn.classList.remove('hidden');
+                    stopBtn.classList.add('inline-flex');
+                }
+            } else if (isStoryPlaying && isStoryPaused) {
+                playIcon.textContent = "▶️";
+                playText.textContent = "متابعة القراءة";
+                if (wave) {
+                    wave.classList.add('hidden');
+                    wave.classList.remove('inline-flex');
+                }
+                if (stopBtn) {
+                    stopBtn.classList.remove('hidden');
+                    stopBtn.classList.add('inline-flex');
+                }
+            } else {
+                playIcon.textContent = "▶️";
+                playText.textContent = "استمع لقراءة القصة (متزامن مع النص)";
+                if (wave) {
+                    wave.classList.add('hidden');
+                    wave.classList.remove('inline-flex');
+                }
+                if (stopBtn) {
+                    stopBtn.classList.add('hidden');
+                    stopBtn.classList.remove('inline-flex');
+                }
+            }
+        }
+
+        // محرك المزامنة الأحادي الدقيق: يمنع ازدواجية المؤقت مع onboundary ويضبط التوقيت بالمللي ثانية
+        function playSentenceAtIndex(sIdx, sessionToken) {
+            if (sessionToken !== playbackSessionToken || !isStoryPlaying || isStoryPaused) return;
+
+            if (sIdx >= flatSentences.length) {
+                stopStoryPlayback();
+                const pBar = document.getElementById('storySyncProgressBar');
+                if (pBar) pBar.style.width = '100%';
+                const statusEl = document.getElementById('storySyncStatus');
+                if (statusEl) statusEl.textContent = "✅ اكتملت قراءة القصة بنجاح! أجب عن الأسئلة بالأسفل.";
+                return;
+            }
+
+            currentSentenceIdx = sIdx;
+            const sentObj = flatSentences[sIdx];
+            cancelSyncAnimationLoop();
+
+            const utterance = new SpeechSynthesisUtterance(sentObj.text);
+            activeUtteranceRef = utterance;
+            utterance.lang = (selectedVoice && selectedVoice.lang) ? selectedVoice.lang : 'en-US';
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            utterance.rate = readingSpeed;
+            utterance.pitch = 1.0;
+
+            // بناء الجدول الزمني الدقيق لكلمات الجملة (في حال عدم دعم الصوت لـ onboundary مثل أصوات الشبكة)
+            const wordTimings = [];
+            let cumulativeMs = 0;
+            let rawExpectedDurationMs = 0;
+
+            sentObj.words.forEach((w) => {
+                const scaledSpeak = (w.speakMs / readingSpeed) * adaptiveSpeedRatio;
+                const scaledPause = (w.pauseAfterMs / readingSpeed) * adaptiveSpeedRatio;
+                wordTimings.push({
+                    startMs: cumulativeMs,
+                    endMs: cumulativeMs + scaledSpeak
+                });
+                cumulativeMs += scaledSpeak + scaledPause;
+                rawExpectedDurationMs += (w.speakMs + w.pauseAfterMs) / readingSpeed;
+            });
+
+            let hasNativeBoundaryEvent = false;
+            let currentWordPointer = 0;
+            let sentenceAudioStartTime = 0;
+
+            // دالة البحث الدقيق عن الكلمة المنطوقة من خلال موقع الحرف (charIndex)
+            const findWordIndexByChar = (charIndex) => {
+                let found = 0;
+                for (let i = 0; i < sentObj.words.length; i++) {
+                    const w = sentObj.words[i];
+                    if (charIndex >= w.charStart) {
+                        found = i;
+                    } else {
+                        break;
+                    }
+                }
+                return found;
+            };
+
+            utterance.onstart = () => {
+                if (sessionToken !== playbackSessionToken || !isStoryPlaying || isStoryPaused) return;
+                sentenceAudioStartTime = performance.now();
+                currentWordPointer = 0;
+                highlightStoryWord(sIdx, 0, true);
+
+                // حلقة تزامن ذكية باستخدام requestAnimationFrame تتوقف فوراً إذا أطلق المتصفح حدث onboundary الأصلي
+                const syncStep = () => {
+                    if (sessionToken !== playbackSessionToken || !isStoryPlaying || isStoryPaused) return;
+
+                    // إذا كان الصوت يدعم onboundary المباشر، نوقف المؤقت تماماً لمنع أي تكرار أو تعارض
+                    if (hasNativeBoundaryEvent) {
+                        syncRafId = null;
+                        return;
+                    }
+
+                    const elapsed = performance.now() - sentenceAudioStartTime;
+                    let targetIdx = currentWordPointer;
+
+                    for (let i = currentWordPointer; i < wordTimings.length; i++) {
+                        if (elapsed >= wordTimings[i].startMs) {
+                            targetIdx = i;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // التقدم للأمام فقط (Monotonic Forward) لمنع تكرار تظليل أي كلمة سابقة
+                    if (targetIdx > currentWordPointer) {
+                        currentWordPointer = targetIdx;
+                        highlightStoryWord(sIdx, currentWordPointer);
+                    }
+
+                    syncRafId = requestAnimationFrame(syncStep);
+                };
+
+                syncRafId = requestAnimationFrame(syncStep);
+            };
+
+            utterance.onboundary = (event) => {
+                if (sessionToken !== playbackSessionToken || !isStoryPlaying || isStoryPaused) return;
+                if (event.name && event.name !== 'word') return;
+                if (typeof event.charIndex !== 'number') return;
+
+                const matchedIdx = findWordIndexByChar(event.charIndex);
+
+                // عند انطلاق حدث الكلمة الثانية أو أي حرف بعد الصفر، نقفل المحرك على الوضع الأصلي الدقيق 100%
+                if (event.charIndex > 0 || matchedIdx > 0) {
+                    hasNativeBoundaryEvent = true;
+                    cancelSyncAnimationLoop();
+                }
+
+                // منع الرجوع للخلف أو تكرار الكلمة نفسها نهائياً
+                if (matchedIdx >= currentWordPointer) {
+                    currentWordPointer = matchedIdx;
+                    highlightStoryWord(sIdx, currentWordPointer);
+                }
+            };
+
+            utterance.onend = () => {
+                if (sessionToken !== playbackSessionToken || !isStoryPlaying || isStoryPaused) return;
+                cancelSyncAnimationLoop();
+
+                // ضمان تظليل آخر كلمة في الجملة إذا انتهى الصوت قبلها بجزء من الثانية
+                const lastIdx = sentObj.words.length - 1;
+                if (currentWordPointer < lastIdx) {
+                    currentWordPointer = lastIdx;
+                    highlightStoryWord(sIdx, lastIdx);
+                }
+
+                // معايرة ذاتية لسرعة الصوت الفعلي لضمان تطابق الجمل التالية بنسبة 100%
+                if (sentenceAudioStartTime > 0 && rawExpectedDurationMs > 250) {
+                    const actualElapsed = performance.now() - sentenceAudioStartTime;
+                    const measuredRatio = actualElapsed / rawExpectedDurationMs;
+                    if (measuredRatio > 0.55 && measuredRatio < 1.65) {
+                        adaptiveSpeedRatio = (adaptiveSpeedRatio * 0.45) + (measuredRatio * 0.55);
+                    }
+                }
+
+                // الانتقال السلس للجملة التالية بدون استدعاء cancel() لمنع بتر آخر حرف أو حدوث تأخير
+                playSentenceAtIndex(sIdx + 1, sessionToken);
+            };
+
+            utterance.onerror = (e) => {
+                if (sessionToken !== playbackSessionToken) return;
+                cancelSyncAnimationLoop();
+                if (e.error === 'canceled' || e.error === 'interrupted') return;
+                if (isStoryPlaying && !isStoryPaused) {
+                    playSentenceAtIndex(sIdx + 1, sessionToken);
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function onStoryWordClicked(sIdx, wLocalIdx, rawWordText) {
+            if (isStoryPlaying) {
+                stopStoryPlayback();
+            }
+            highlightStoryWord(sIdx, wLocalIdx, true);
+            const cleanText = rawWordText.replace(/[.,!?"]/g, '');
+            speakSingleText(cleanText);
+        }
+
+        function speakWordWithMeaning(word) {
+            if (isStoryPlaying) stopStoryPlayback();
+            syncSvgIllustrationWithWord(word.split(' ')[0]);
+            speakSingleText(word);
+        }
+
+        function speakSingleText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            activeUtteranceRef = u;
+            u.lang = (selectedVoice && selectedVoice.lang) ? selectedVoice.lang : 'en-US';
+            if (selectedVoice) {
+                u.voice = selectedVoice;
+            }
+            u.rate = readingSpeed;
+            u.pitch = 1.0;
+            window.speechSynthesis.speak(u);
+        }
+
+        function speakText(text) {
+            if (isStoryPlaying) {
+                stopStoryPlayback();
+            }
+            speakSingleText(text);
+        }
+
+        function speakFullStory() {
+            toggleStoryPlayback();
+        }
+
+        // =========================================================================
+        // دوال التحقق من الإجابات، لوحة الأسئلة (1–19)، وتحديد المستوى والطباعة
+        // =========================================================================
+        function getCorrectAnswerForQuestion(qNum) {
+            if (qNum <= 3) return sec1Data.find(d => d.qNum === qNum).correctLetter;
+            if (qNum <= 7) return sec2Data.find(d => d.qNum === qNum).correct;
+            if (qNum <= 11) return sec3Data.find(d => d.qNum === qNum).correct;
+            return sec4Data.find(d => d.qNum === qNum).correct;
+        }
+
+        function isQuestionCorrect(qNum) {
+            const ans = userAnswers[qNum];
+            if (!ans) return false;
+            const target = getCorrectAnswerForQuestion(qNum);
+            return ans.trim().toLowerCase() === target.trim().toLowerCase();
+        }
+
+        function updateNavigationPanel() {
+            let answeredCount = 0;
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const dot = document.getElementById(`navDot-${i}`);
+                const btn = document.getElementById(`navBtn-${i}`);
+                if (!dot || !btn) continue;
+
+                if (userAnswers[i]) {
+                    answeredCount++;
+                    if (!isSubmitted) {
+                        dot.className = "w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center en-font";
+                        dot.textContent = i;
+                        btn.className = "py-1.5 rounded-xl border border-amber-400 bg-amber-50 flex items-center justify-center font-extrabold text-xs";
+                    }
+                } else {
+                    dot.className = "w-5 h-5 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center en-font";
+                    dot.textContent = i;
+                    btn.className = "py-1.5 rounded-xl border border-slate-200 bg-white flex items-center justify-center font-extrabold text-xs";
+                }
+            }
+
+            const badgeEl = document.getElementById('progressBadge');
+            if (badgeEl) badgeEl.textContent = `${answeredCount} / ${TOTAL_QUESTIONS} مجاب`;
+            const barEl = document.getElementById('progressBar');
+            if (barEl) barEl.style.width = `${(answeredCount / TOTAL_QUESTIONS) * 100}%`;
+        }
+
+        function filterSection(secNum) {
+            const tabs = ['all', 1, 2, 3, 4];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (!btn) return;
+                if (t === secNum) {
+                    btn.className = "px-4 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-amber-400 text-slate-900 shadow transition";
+                } else {
+                    btn.className = "px-3.5 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm bg-white/10 hover:bg-white/20 text-white transition";
+                }
+            });
+
+            [1, 2, 3, 4].forEach(n => {
+                const block = document.getElementById(`section-block-${n}`);
+                if (!block) return;
+                if (secNum === 'all' || secNum === n) {
+                    block.classList.remove('hidden');
+                } else {
+                    block.classList.add('hidden');
+                }
+            });
+
+            setTimeout(drawMatchArrows, 60);
+        }
+
+        function scrollToQuestion(qNum) {
+            filterSection('all');
+            const target = document.getElementById(`qRow-${qNum}`);
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.classList.add('ring-4', 'ring-amber-400');
+                setTimeout(() => target.classList.remove('ring-4', 'ring-amber-400'), 1300);
+            }
+        }
+
+        function evaluateQuiz() {
+            filterSection('all');
+            isSubmitted = true;
+            let totalScore = 0;
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const isCorrect = isQuestionCorrect(i);
+                const correctVal = getCorrectAnswerForQuestion(i);
+                if (isCorrect) totalScore++;
+
+                const dot = document.getElementById(`navDot-${i}`);
+                const btn = document.getElementById(`navBtn-${i}`);
+                if (dot && btn) {
+                    if (isCorrect) {
+                        dot.className = "w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center en-font";
+                        dot.textContent = "✓";
+                        btn.className = "py-1.5 rounded-xl border border-emerald-400 bg-emerald-50 flex items-center justify-center font-extrabold text-xs";
+                    } else {
+                        dot.className = "w-5 h-5 rounded-full bg-rose-500 text-white flex items-center justify-center en-font";
+                        dot.textContent = "✗";
+                        btn.className = "py-1.5 rounded-xl border border-rose-300 bg-rose-50 flex items-center justify-center font-extrabold text-xs";
+                    }
+                }
+
+                if (i >= 12) {
+                    const row = document.getElementById(`qRow-${i}`);
+                    if (row) {
+                        row.querySelectorAll('.circle-choice.circled').forEach(el => {
+                            el.classList.add(isCorrect ? 'correct-circle' : 'wrong-circle');
+                        });
+                    }
+                }
+
+                const badge = document.getElementById(`badge-${i}`);
+                if (badge) {
+                    badge.classList.remove('hidden');
+                    if (isCorrect) {
+                        badge.className = "text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 inline-block";
+                        badge.textContent = "✓ صحيح";
+                    } else {
+                        let displayCorr = correctVal;
+                        if (i >= 8 && i <= 11) {
+                            displayCorr = correctVal === 'true' ? '✓ (True)' : '✗ (False)';
+                        }
+                        badge.className = "text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 inline-block";
+                        badge.textContent = `✗ الصواب: ${displayCorr}`;
+                    }
+                }
+            }
+
+            drawMatchArrows();
+            document.getElementById('headerScore').textContent = totalScore;
+            const percentage = Math.round((totalScore / TOTAL_QUESTIONS) * 100);
+
+            const s1Score = [1, 2, 3].filter(isQuestionCorrect).length;
+            const s2Score = [4, 5, 6, 7].filter(isQuestionCorrect).length;
+            const s3Score = [8, 9, 10, 11].filter(isQuestionCorrect).length;
+            const s4Score = [12, 13, 14, 15, 16, 17, 18, 19].filter(isQuestionCorrect).length;
+
+            let levelInfo = {};
+            if (totalScore >= 16) {
+                levelInfo = {
+                    emoji: "🏆",
+                    title: "مستوى متقدم ومتميز (Excellent)",
+                    desc: `أداء رائع! حصل الطالب على ${totalScore} من 19 (${percentage}%) وأتقن المفردات والفهم القرائي بامتياز.`,
+                    recommendation: "الطالب متمكن من فهم النصوص القرائية ومفردات الطبيعة والوظائف، ومستعد للانتقال للمرحلة المتقدمة.",
+                    boxClass: "bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-3.5 text-center shadow-md",
+                    badgeBoxClass: "bg-emerald-50 p-4 rounded-2xl border border-emerald-300",
+                    badgeTextClass: "text-lg font-extrabold text-emerald-800 mt-1"
+                };
+            } else if (totalScore >= 11) {
+                levelInfo = {
+                    emoji: "⭐",
+                    title: "مستوى متوسط (Very Good)",
+                    desc: `أداء جيد جداً! حصل الطالب على ${totalScore} من 19 (${percentage}%) مع حاجته لمراجعة بعض الفقرات.`,
+                    recommendation: "يُنصح بإعادة الاستماع لقراءة القصة المتزامنة ومراجعة الكلمات التي أخطأ بها الطالب لتعزيز الاستيعاب القرائي.",
+                    boxClass: "bg-gradient-to-br from-amber-500 to-orange-600 text-white rounded-2xl p-3.5 text-center shadow-md",
+                    badgeBoxClass: "bg-amber-50 p-4 rounded-2xl border border-amber-300",
+                    badgeTextClass: "text-lg font-extrabold text-amber-800 mt-1"
+                };
+            } else {
+                levelInfo = {
+                    emoji: "🌱",
+                    title: "مستوى مبتدئ (يحتاج لدعم وتدريب)",
+                    desc: `حصل الطالب على ${totalScore} من 19 (${percentage}%). يحتاج لتدريب إضافي على المفردات والقراءة.`,
+                    recommendation: "يُنصح بالاستماع لقراءة القصة بسرعة هادئة (0.75x) مع متابعة تظليل الكلمات والتدرب على المفردات الأساسية.",
+                    boxClass: "bg-gradient-to-br from-rose-500 to-red-600 text-white rounded-2xl p-3.5 text-center shadow-md",
+                    badgeBoxClass: "bg-rose-50 p-4 rounded-2xl border border-rose-300",
+                    badgeTextClass: "text-lg font-extrabold text-rose-800 mt-1"
+                };
+            }
+
+            const liveLevelBox = document.getElementById('liveLevelBox');
+            liveLevelBox.className = levelInfo.boxClass;
+            document.getElementById('levelEmoji').textContent = levelInfo.emoji;
+            document.getElementById('levelTitle').className = "font-extrabold text-white text-sm";
+            document.getElementById('levelTitle').textContent = levelInfo.title;
+            document.getElementById('levelDesc').className = "text-[11px] text-white/90 mt-1";
+            document.getElementById('levelDesc').textContent = levelInfo.desc;
+
+            const studentName = document.getElementById('studentName').value.trim();
+            document.getElementById('reportStudentName').textContent = studentName || "طالب متميز";
+            document.getElementById('reportFinalScore').textContent = `${totalScore} / 19`;
+            document.getElementById('reportPercentage').textContent = `النسبة المئوية: ${percentage}%`;
+            document.getElementById('reportLevelBadgeBox').className = levelInfo.badgeBoxClass;
+            document.getElementById('reportFinalLevel').className = levelInfo.badgeTextClass;
+            document.getElementById('reportFinalLevel').textContent = `${levelInfo.emoji} ${levelInfo.title}`;
+            document.getElementById('reportRecommendation').textContent = levelInfo.recommendation;
+            document.getElementById('reportDate').textContent = `تاريخ التقييم: ${new Date().toLocaleDateString('ar-SA')}`;
+
+            const breakdown = [
+                { title: "السؤال 1: التوصيل بالسهم (Match)", score: s1Score, max: 3 },
+                { title: "السؤال 2: الكلمة تحت الصورة (Pictures)", score: s2Score, max: 4 },
+                { title: "السؤال 3: صح أم خطأ (True or False)", score: s3Score, max: 4 },
+                { title: "السؤال 4: الفهم القرائي (Read & Choose)", score: s4Score, max: 8 }
+            ];
+
+            const breakdownEl = document.getElementById('skillsBreakdown');
+            breakdownEl.innerHTML = '';
+            breakdown.forEach(b => {
+                const isFull = b.score === b.max;
+                const div = document.createElement('div');
+                div.className = `p-3.5 rounded-2xl border flex items-center justify-between ${isFull ? 'bg-emerald-50 border-emerald-200' : 'bg-amber-50/70 border-amber-200'}`;
+                div.innerHTML = `
+                    <span class="font-extrabold text-xs sm:text-sm text-slate-800">${b.title}</span>
+                    <span class="en-font font-black text-sm px-2.5 py-1 rounded-xl ${isFull ? 'bg-emerald-200 text-emerald-900' : 'bg-amber-200 text-amber-900'}">${b.score} / ${b.max}</span>
+                `;
+                breakdownEl.appendChild(div);
+            });
+
+            const reportCard = document.getElementById('resultReportCard');
+            reportCard.classList.remove('hidden');
+            reportCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function unlockForEditing() {
+            isSubmitted = false;
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const badge = document.getElementById(`badge-${i}`);
+                if (badge) badge.classList.add('hidden');
+            }
+            drawMatchArrows();
+        }
+
+        function printStudentResult() {
+            if (!isSubmitted) evaluateQuiz();
+            setTimeout(() => window.print(), 250);
+        }
+
+        function resetQuiz() {
+            stopStoryPlayback();
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                userAnswers[i] = null;
+            }
+            isSubmitted = false;
+            activeMatchSource = null;
+            selectedWordFromBank = null;
+
+            [1, 2, 3].forEach(n => {
+                const box = document.getElementById(`matchLetterBox-${n}`);
+                if (box) box.textContent = '--';
+                const leftEl = document.getElementById(`matchLeft-${n}`);
+                if (leftEl) leftEl.classList.remove('active-source');
+                const badge = document.getElementById(`badge-${n}`);
+                if (badge) badge.classList.add('hidden');
+            });
+
+            renderSections();
+            drawMatchArrows();
+            document.getElementById('headerScore').textContent = "--";
+            document.getElementById('resultReportCard').classList.add('hidden');
+
+            const liveLevelBox = document.getElementById('liveLevelBox');
+            liveLevelBox.className = "bg-gradient-to-br from-emerald-50 to-amber-50 rounded-2xl p-3.5 text-center border border-emerald-200";
+            document.getElementById('levelEmoji').textContent = "📊";
+            document.getElementById('levelTitle').className = "font-extrabold text-emerald-950 text-sm";
+            document.getElementById('levelTitle').textContent = "بانتظار إكمال الاختبار (19 سؤالاً)";
+            document.getElementById('levelDesc').className = "text-[11px] text-slate-600 mt-1";
+            document.getElementById('levelDesc').textContent = "أجب عن الأسئلة الأربعة ثم اضغط على اعتماد النتيجة لتحديد المستوى بدقة.";
+
+            updateNavigationPanel();
+        }
+
+        window.addEventListener('resize', drawMatchArrows);
+
+        window.onload = () => {
+            buildInteractiveStoryDOM();
+            initVoiceEngine();
+            renderSections();
+            initSidebarNavigation();
+            updateNavigationPanel();
+            setTimeout(drawMatchArrows, 100);
+        };
+    </script>
+</body>
+</html>
